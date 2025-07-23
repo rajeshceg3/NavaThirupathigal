@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nava Thirupathigal - A Celestial Journey</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@800&family=Lora:ital,wght@0,400;1,400&family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-deep-space: #0d052a;
+            --color-nebula: #0a041f;
+            --color-star-gold: #FFD700;
+            --color-light-glow: #ffeca8;
+            --color-text-primary: #f0f0f0;
+            --color-text-secondary: #a7a1c4;
+            --font-display: 'Manrope', sans-serif;
+            --font-body: 'Lora', serif;
+            --font-tamil: 'Noto Sans Tamil', sans-serif;
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* --- Base & Typography --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--color-nebula);
+            font-family: var(--font-body);
+            color: var(--color-text-primary);
+        }
+
+        /* --- Geometric SVG Background --- */
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%231a1042" fill-opacity="0.2"%3E%3Cpath opacity=".5" d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h16v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z"/%3E%3Cpath d="M6 5V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v6H0V5h6zM6 15V10h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 25V20h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 35V30h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 45V40h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 55V50h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 65V60h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 75V70h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 85V80h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 95V90h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            animation: drift 120s linear infinite;
+            z-index: -1;
+        }
+        @keyframes drift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        /* --- Intro Screen --- */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, var(--color-deep-space) 0%, var(--color-nebula) 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 1.5s var(--ease-out-quint);
+        }
+        .intro-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .intro-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px var(--color-light-glow);
+            text-align: center;
+            margin: 0 2rem 2rem 2.5rem; /* Optical alignment */
+        }
+        .intro-subtitle {
+            font-family: var(--font-body);
+            font-style: italic;
+            color: var(--color-text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        .intro-button {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--color-deep-space);
+            background: var(--color-star-gold);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 0 20px 0px rgba(255, 215, 0, 0.5), 
+                        0 0 40px 0px rgba(255, 215, 0, 0.3),
+                        inset 0 0 10px rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s var(--ease-out-quint), box-shadow 0.3s var(--ease-out-quint);
+            animation: pulse-button 2.5s infinite;
+        }
+        .intro-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px 5px rgba(255, 215, 0, 0.6), 
+                        0 0 60px 0px rgba(255, 215, 0, 0.4),
+                        inset 0 0 10px rgba(255, 255, 255, 0.5);
+            animation-play-state: paused;
+        }
+        @keyframes pulse-button {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- Main App Layout --- */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, var(--color-deep-space) 0%, var(--color-nebula) 70%);
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        .app-container.visible {
+            opacity: 1;
+        }
+
+        /* --- Left Navigation Panel --- */
+        .nav-panel {
+            width: 300px;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 10px 0px 50px -20px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .nav-header {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+            text-shadow: 0 0 10px var(--color-light-glow);
+        }
+        .temple-list { list-style: none; }
+        .temple-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.4s var(--ease-out-quint);
+        }
+        .temple-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .temple-orb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-right: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            color: var(--color-text-secondary);
+            background: var(--color-nebula);
+            border: 2px solid var(--color-text-secondary);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            transition: all 0.4s var(--ease-out-quint);
+        }
+        .temple-item:hover .temple-orb {
+            border-color: var(--color-light-glow);
+            color: var(--color-light-glow);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 15px var(--color-light-glow);
+        }
+        .temple-item.active .temple-orb {
+            background: var(--color-star-gold);
+            color: var(--color-deep-space);
+            border: 2px solid var(--color-star-gold);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 20px var(--color-star-gold);
+        }
+        .temple-name-container { display: flex; flex-direction: column; }
+        .temple-name-en {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+        }
+        .temple-name-ta { font-family: var(--font-tamil); font-size: 0.9rem; color: var(--color-text-secondary); }
+        
+        /* --- Map Area --- */
+        .map-container { flex-grow: 1; position: relative; }
+        #map { width: 100%; height: 100%; background-color: var(--color-deep-space); }
+        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+            background-color: rgba(13, 5, 42, 0.8) !important;
+            color: var(--color-text-secondary) !important;
+            border: 1px solid var(--color-text-secondary) !important;
+            backdrop-filter: blur(5px);
+        }
+        .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
+            background-color: rgba(29, 15, 75, 0.9) !important;
+            color: white !important;
+        }
+        .leaflet-marker-icon {
+            filter: drop-shadow(0 0 8px var(--color-star-gold));
+            transition: transform 0.3s var(--ease-out-quint);
+        }
+        @keyframes pulse-marker {
+            0% { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--color-star-gold));}
+            50% { transform: scale(1.3); filter: drop-shadow(0 0 15px var(--color-star-gold));}
+            100% { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--color-star-gold));}
+        }
+        .pulsing-marker { animation: pulse-marker 1.5s infinite; }
+
+        /* --- Info Card --- */
+        .info-card {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 380px;
+            max-width: 90%;
+            background: rgba(26, 16, 66, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transform: translateX(calc(100% + 4rem));
+            transition: transform 1s var(--ease-out-quint);
+            overflow: hidden;
+        }
+        .info-card.visible { transform: translateX(0); }
+        .info-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .info-card-content { padding: 1.5rem; }
+        .info-card-header { margin-bottom: 1rem; }
+        .info-card-title {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            line-height: 1.1;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 5px var(--color-light-glow);
+        }
+        .info-card-subtitle-ta { font-family: var(--font-tamil); font-size: 1.2rem; color: var(--color-text-secondary); }
+        .info-card-planet-info {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .planet-icon { font-size: 1.5rem; margin-right: 1rem; filter: drop-shadow(0 0 5px var(--color-star-gold)); }
+        .planet-text { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-light-glow); }
+        .info-card-description { font-family: var(--font-body); font-size: 1rem; line-height: 1.7; color: var(--color-text-primary); }
+
+        .info-card-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-family: sans-serif;
+            line-height: 1;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .info-card-close-btn:hover {
+            background: rgba(0,0,0,0.6);
+            transform: scale(1.1);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .nav-panel { width: 250px; }
+            .info-card { width: 320px; }
+        }
+        
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .nav-panel {
+                width: 100%;
+                height: auto;
+                flex-shrink: 1;
+                padding: 1rem;
+                box-shadow: 0 10px 40px -15px rgba(0,0,0,0.6);
+            }
+            .nav-header { font-size: 1.2rem; margin-bottom: 0.5rem; }
+            .temple-list { display: flex; overflow-x: auto; padding-bottom: 1rem; -ms-overflow-style: none; scrollbar-width: none; }
+            .temple-list::-webkit-scrollbar { display: none; }
+            .temple-item { flex-direction: column; align-items: center; padding: 0.5rem; width: 120px; flex-shrink: 0; }
+            .temple-orb { margin-right: 0; margin-bottom: 0.5rem; }
+            .temple-name-container { text-align: center; }
+            .temple-name-en { font-size: 0.8rem; }
+            .temple-name-ta { font-size: 0.7rem; }
+            
+            .info-card {
+                top: auto;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 16px 16px 0 0;
+                transform: translateY(100%);
+                border-width: 1px 0 0 0;
+            }
+            .info-card.visible { transform: translateY(0); }
+            .info-card-image { height: 120px; }
+            .info-card-content { padding: 1rem; }
+            .info-card-title { font-size: 1.5rem; }
+            .info-card-close-btn { display: flex; } /* Show close button on mobile */
+            .intro-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-pattern"></div>
+    
+    <div class="intro-screen" id="intro-screen">
+        <h1 class="intro-title">Nava Thirupathigal</h1>
+        <p class="intro-subtitle">A Celestial River Journey</p>
+        <button class="intro-button" id="intro-button">Begin the Journey</button>
+    </div>
+
+    <div class="app-container" id="app-container">
+        <nav class="nav-panel">
+            <h2 class="nav-header">The Constellation</h2>
+            <ul class="temple-list" id="temple-list"></ul>
+        </nav>
+        <main class="map-container">
+            <div id="map"></div>
+            <div class="info-card" id="info-card">
+                <button class="info-card-close-btn" id="info-card-close-btn">×</button>
+                <img src="" alt="" class="info-card-image" id="info-card-image">
+                <div class="info-card-content">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title" id="info-card-title"></h3>
+                        <p class="info-card-subtitle-ta" id="info-card-subtitle-ta"></p>
+                    </div>
+                    <div class="info-card-planet-info">
+                        <span class="planet-icon" id="planet-icon"></span>
+                        <span class="planet-text" id="planet-text"></span>
+                    </div>
+                    <p class="info-card-description" id="info-card-description"></p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Data ---
+            const templeData = [
+                { id: 0, name: 'Srivaikuntam', tamilName: 'ஸ்ரீவைகுண்டம்', planet: 'Sun', planetIcon: '☀️', coords: [8.6292, 77.9042], image: 'https://i.imgur.com/eB3K20Q.jpeg', description: 'The first temple in the pilgrimage, dedicated to Lord Vishnu as Vaikunthanathan. It is associated with Surya (the Sun) and is believed to grant devotees a life free from obstacles.' },
+                { id: 1, name: 'Thiruvaragunamangai', tamilName: 'திருவரகுணமங்கை', planet: 'Moon', planetIcon: '🌙', coords: [8.6419, 77.9211], image: 'https://i.imgur.com/bWq3sA8.jpeg', description: 'Known as Natham, this temple is dedicated to Lord Vijayasana Perumal. It is linked to Chandra (the Moon), and worship here is said to bestow mental peace and clarity.' },
+                { id: 2, name: 'Thirupuliyangudi', tamilName: 'திருப்புளியங்குடி', planet: 'Mars', planetIcon: '🪐', coords: [8.6483, 77.9258], image: 'https://i.imgur.com/6XyU1dE.jpeg', description: 'Worshipped as Kasinivendan Perumal, this temple is associated with Budhan (Mercury). Devotees pray here for wisdom, knowledge, and success in education and communication.' },
+                { id: 3, name: 'Rettai Tirupati (North)', tamilName: 'இரட்டை திருப்பதி (வடக்கு)', planet: 'Rahu', planetIcon: '☄️', coords: [8.6651, 77.9599], image: 'https://i.imgur.com/67wHqS3.jpeg', description: 'One of the twin temples, dedicated to Aravindalochanar. It is associated with Rahu, and prayers here are believed to alleviate the malefic effects of this celestial body.' },
+                { id: 4, name: 'Rettai Tirupati (South)', tamilName: 'இரட்டை திருப்பதி (தெற்கு)', planet: 'Ketu', planetIcon: '💫', coords: [8.6644, 77.9602], image: 'https://i.imgur.com/rN55oHh.jpeg', description: 'The other twin temple, dedicated to Devapiran. It is linked to Ketu, and worship here is said to grant spiritual enlightenment and freedom from worldly bonds.' },
+                { id: 5, name: 'Thirukkulanthai', tamilName: 'திருக்குளந்தை', planet: 'Saturn', planetIcon: '🪐', coords: [8.6536, 77.9458], image: 'https://i.imgur.com/vH977QY.jpeg', description: 'Known as Perunkulam, the deity here is Srinivasa Perumal. This temple is associated with Shani (Saturn), and worship is believed to mitigate hardships and grant longevity.' },
+                { id: 6, name: 'Thirukolur', tamilName: 'திருக்கோளூர்', planet: 'Mars', planetIcon: '☄️', coords: [8.6834, 78.0053], image: 'https://i.imgur.com/M6L5Y2w.jpeg', description: 'Home to Vaithamanidhi Perumal, this temple is associated with Angaraka (Mars). Devotees pray here to recover lost wealth and to overcome debts and financial troubles.' },
+                { id: 7, name: 'Thiruperai', tamilName: 'திருப்பேரை', planet: 'Venus', planetIcon: '✨', coords: [8.6575, 77.9786], image: 'https://i.imgur.com/vLq8eGj.jpeg', description: 'Here, Lord Vishnu is Makara Nedunkuzhaikathar. The temple is associated with Shukra (Venus) and is a place to pray for happy relationships, luxury, and artistic talents.' },
+                { id: 8, name: 'Alwarthirunagari', tamilName: 'ஆழ்வார்திருநகரி', planet: 'Jupiter', planetIcon: '☄️', coords: [8.6014, 77.8767], image: 'https://i.imgur.com/y8U3WbF.jpeg', description: 'The final temple, dedicated to Adinathan. It is the birthplace of the saint Nammalvar and is linked to Guru (Jupiter), the bestower of wisdom, fortune, and divine grace.' }
+            ];
+            
+            // --- DOM Elements ---
+            const introScreen = document.getElementById('intro-screen');
+            const introButton = document.getElementById('intro-button');
+            const appContainer = document.getElementById('app-container');
+            const templeList = document.getElementById('temple-list');
+            const infoCard = document.getElementById('info-card');
+            const infoCardCloseBtn = document.getElementById('info-card-close-btn');
+            // ... (rest of info card elements are queried inside render function for tidiness)
+            
+            // --- App State & Core Variables ---
+            let map;
+            let markers = [];
+            let templeNavItems = [];
+            let activeTempleId = null; // SINGLE SOURCE OF TRUTH
+
+            // --- Core Functions ---
+            
+            // Centralized State Mutator: The only way to change the active temple
+            function setActiveTemple(id) {
+                if (id === activeTempleId) return; // Do nothing if already active
+                activeTempleId = id;
+                render();
+            }
+
+            // Declarative Render Function: Updates the entire UI based on the current state
+            function render() {
+                // Update Nav List
+                templeNavItems.forEach((item, index) => {
+                    item.classList.toggle('active', index === activeTempleId);
+                });
+
+                // Update Markers
+                markers.forEach((marker, index) => {
+                    marker.getElement()?.classList.toggle('pulsing-marker', index === activeTempleId);
+                });
+
+                if (activeTempleId !== null) {
+                    const temple = templeData[activeTempleId];
+                    
+                    // Update and show info card
+                    document.getElementById('info-card-image').src = temple.image;
+                    document.getElementById('info-card-image').alt = temple.name;
+                    document.getElementById('info-card-title').textContent = temple.name;
+                    document.getElementById('info-card-subtitle-ta').textContent = temple.tamilName;
+                    document.getElementById('planet-icon').textContent = temple.planetIcon;
+                    document.getElementById('planet-text').textContent = temple.planet;
+                    document.getElementById('info-card-description').textContent = temple.description;
+                    infoCard.classList.add('visible');
+                    
+                    // Fly map to location
+                    map.flyTo(temple.coords, 15, { animate: true, duration: 1.5 });
+
+                } else {
+                    // Hide info card if no temple is selected
+                    infoCard.classList.remove('visible');
+                }
+            }
+
+            function initMap() {
+                map = L.map('map', { center: [8.64, 77.94], zoom: 12, zoomControl: false });
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd', maxZoom: 20
+                }).addTo(map);
+                L.control.zoom({ position: 'bottomright' }).addTo(map);
+            }
+
+            // Optimized population function
+            function populateNavAndMarkers() {
+                const fragment = document.createDocumentFragment(); // Use fragment for performance
+                const customIcon = L.icon({
+                    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9ImciIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZlYWEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmZkNTAwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNMTYgMEM3LjIgMCAwIDcuMiAwIDE2YzAgNC40IDEuOCA4LjQgNC43IDEwLjlsOS4zIDUuMSA5LjMtNS4xQzMwLjIgMjQuNCAzMiAyMC40IDMyIDE2IDMyIDcuMiAyNC44IDAgMTYgMHoiIGZpbGw9InVybCgjZykiLz4KPC9zdmc+',
+                    iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]
+                });
+
+                templeData.forEach(temple => {
+                    // Create Nav Item
+                    const li = document.createElement('li');
+                    li.className = 'temple-item';
+                    li.innerHTML = `<div class="temple-orb">${temple.id + 1}</div><div class="temple-name-container"><span class="temple-name-en">${temple.name}</span><span class="temple-name-ta">${temple.tamilName}</span></div>`;
+                    li.addEventListener('click', () => setActiveTemple(temple.id));
+                    fragment.appendChild(li);
+
+                    // Create Map Marker with Bidirectional Link
+                    const marker = L.marker(temple.coords, { icon: customIcon }).addTo(map);
+                    marker.on('click', () => setActiveTemple(temple.id)); // <-- BUG FIX: Bidirectional interaction
+                    markers.push(marker);
+                });
+
+                templeList.appendChild(fragment); // Single DOM insertion
+                templeNavItems = Array.from(templeList.children); // Cache DOM nodes
+            }
+
+            // --- Event Listeners & Initialization ---
+            introButton.addEventListener('click', () => {
+                introScreen.classList.add('hidden');
+                appContainer.classList.add('visible');
+                map.invalidateSize(); // Ensure map renders correctly after being unhidden
+                setActiveTemple(0); // BUG FIX: Set initial state immediately for seamless transition
+            });
+            
+            infoCardCloseBtn.addEventListener('click', () => {
+                setActiveTemple(null); // BUG FIX: Allows closing the info card
+            });
+
+            // --- Initializer ---
+            initMap();
+            populateNavAndMarkers();
+        });
+    </script>
+</body>
+</html>
