@@ -13,16 +13,22 @@
 
     <style>
         :root {
-            --color-deep-space: #0d052a;
-            --color-nebula: #0a041f;
-            --color-star-gold: #FFD700;
-            --color-light-glow: #ffeca8;
-            --color-text-primary: #f0f0f0;
-            --color-text-secondary: #a7a1c4;
+            --color-bg-light: #fdfcfa;
+            --color-bg-panel: #ffffff;
+            --color-primary: #6a5acd; /* SlateBlue */
+            --color-primary-light: #e0d8ff;
+            --color-secondary: #ff8c69; /* Coral */
+            --color-accent: #ffb6c1; /* LightPink */
+            --color-text-strong: #2a2a2a;
+            --color-text-primary: #5b5b5b;
+            --color-text-secondary: #8a8a8a;
+            --color-border: #ececec;
             --font-display: 'Manrope', sans-serif;
             --font-body: 'Lora', serif;
             --font-tamil: 'Noto Sans Tamil', sans-serif;
             --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
 
         /* --- Base & Typography --- */
@@ -36,25 +42,29 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            background-color: var(--color-nebula);
+            background-color: var(--color-bg-light);
             font-family: var(--font-body);
             color: var(--color-text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Geometric SVG Background --- */
+        /* --- Animated Gradient Background --- */
         .background-pattern {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%231a1042" fill-opacity="0.2"%3E%3Cpath opacity=".5" d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h16v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z"/%3E%3Cpath d="M6 5V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v6H0V5h6zM6 15V10h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 25V20h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 35V30h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 45V40h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 55V50h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 65V60h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 75V70h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 85V80h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6zM6 95V90h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v5h9v-5h1v6H0v-1h6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-            animation: drift 120s linear infinite;
+            background: linear-gradient(45deg, #f3e6ff, #e6f7ff, #ffe6f0, #fff3e6);
+            background-size: 400% 400%;
+            animation: gradient-flow 20s ease infinite;
             z-index: -1;
         }
-        @keyframes drift {
-            from { transform: translate(0, 0); }
-            to { transform: translate(100px, 100px); }
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* --- Intro Screen --- */
@@ -64,7 +74,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at center, var(--color-deep-space) 0%, var(--color-nebula) 70%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -79,58 +91,64 @@
         }
         .intro-title {
             font-family: var(--font-display);
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            color: white;
-            letter-spacing: 0.5em;
+            color: var(--color-text-strong);
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            text-shadow: 0 0 15px var(--color-light-glow);
             text-align: center;
-            margin: 0 2rem 2rem 2.5rem; /* Optical alignment */
+            margin: 0 2rem 1.5rem 2.5rem; /* Optical alignment */
+            animation: text-reveal 1.5s var(--ease-out-quint) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes text-reveal {
+            to { opacity: 1; transform: translateY(0); }
         }
         .intro-subtitle {
             font-family: var(--font-body);
             font-style: italic;
-            color: var(--color-text-secondary);
-            font-size: 1.2rem;
+            color: var(--color-text-primary);
+            font-size: 1.3rem;
             margin-bottom: 3rem;
+            animation: text-reveal 1.5s var(--ease-out-quint) 0.5s forwards;
+            opacity: 0;
+            transform: translateY(20px);
         }
         .intro-button {
             font-family: var(--font-display);
             font-size: 1rem;
             font-weight: 800;
-            color: var(--color-deep-space);
-            background: var(--color-star-gold);
+            color: #fff;
+            background: var(--color-primary);
             border: none;
             padding: 1rem 2.5rem;
             border-radius: 50px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            box-shadow: 0 0 20px 0px rgba(255, 215, 0, 0.5), 
-                        0 0 40px 0px rgba(255, 215, 0, 0.3),
-                        inset 0 0 10px rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow-medium);
             transition: transform 0.3s var(--ease-out-quint), box-shadow 0.3s var(--ease-out-quint);
-            animation: pulse-button 2.5s infinite;
+            animation: text-reveal 1.5s var(--ease-out-quint) 1s forwards, pulse-button 2.5s infinite 2s;
+            opacity: 0;
+            transform: translateY(20px);
         }
         .intro-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px 5px rgba(255, 215, 0, 0.6), 
-                        0 0 60px 0px rgba(255, 215, 0, 0.4),
-                        inset 0 0 10px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05) translateY(20px);
+            box-shadow: 0 12px 40px rgba(106, 90, 205, 0.4);
             animation-play-state: paused;
         }
         @keyframes pulse-button {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1) translateY(20px); }
+            50% { transform: scale(1.03) translateY(20px); }
+            100% { transform: scale(1) translateY(20px); }
         }
 
         /* --- Main App Layout --- */
         .app-container {
             display: flex;
             height: 100vh;
-            background: radial-gradient(ellipse at center, var(--color-deep-space) 0%, var(--color-nebula) 70%);
+            background: transparent;
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
@@ -140,34 +158,57 @@
 
         /* --- Left Navigation Panel --- */
         .nav-panel {
-            width: 300px;
-            padding: 2rem 1.5rem;
+            width: 320px;
+            padding: 2rem 0;
             overflow-y: auto;
             flex-shrink: 0;
-            box-shadow: 10px 0px 50px -20px rgba(0,0,0,0.5);
+            background: var(--color-bg-panel);
+            border-right: 1px solid var(--color-border);
             z-index: 1000;
         }
         .nav-header {
             font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             text-align: center;
             margin-bottom: 2rem;
-            color: white;
-            text-shadow: 0 0 10px var(--color-light-glow);
+            padding: 0 1.5rem;
+            color: var(--color-text-strong);
         }
         .temple-list { list-style: none; }
         .temple-item {
             display: flex;
             align-items: center;
-            padding: 1rem 0.5rem;
+            padding: 1rem 1.5rem;
             cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.4s var(--ease-out-quint);
+            border-right: 4px solid transparent;
+            transition: background-color 0.4s var(--ease-out-quint), border-color 0.4s var(--ease-out-quint);
+            position: relative;
         }
-        .temple-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .temple-item:hover { background-color: var(--color-bg-light); }
+        .temple-item.active {
+            background-color: var(--color-primary-light);
+            border-right-color: var(--color-primary);
+        }
+        .temple-item.active::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            animation: pulse-indicator 1.5s infinite;
+        }
+        @keyframes pulse-indicator {
+            0% { box-shadow: 0 0 0 0 rgba(106, 90, 205, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(106, 90, 205, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(106, 90, 205, 0); }
+        }
         .temple-orb {
             width: 40px;
             height: 40px;
@@ -180,52 +221,51 @@
             font-family: var(--font-display);
             font-weight: 800;
             color: var(--color-text-secondary);
-            background: var(--color-nebula);
-            border: 2px solid var(--color-text-secondary);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            background: var(--color-bg-light);
+            border: 2px solid var(--color-border);
             transition: all 0.4s var(--ease-out-quint);
         }
         .temple-item:hover .temple-orb {
-            border-color: var(--color-light-glow);
-            color: var(--color-light-glow);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 15px var(--color-light-glow);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
         }
         .temple-item.active .temple-orb {
-            background: var(--color-star-gold);
-            color: var(--color-deep-space);
-            border: 2px solid var(--color-star-gold);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 20px var(--color-star-gold);
+            background: var(--color-primary);
+            color: white;
+            border: 2px solid var(--color-primary);
+            box-shadow: 0 0 20px rgba(106, 90, 205, 0.5);
         }
         .temple-name-container { display: flex; flex-direction: column; }
         .temple-name-en {
             font-family: var(--font-display);
             font-weight: 800;
             font-size: 1rem;
-            color: var(--color-text-primary);
+            color: var(--color-text-strong);
         }
         .temple-name-ta { font-family: var(--font-tamil); font-size: 0.9rem; color: var(--color-text-secondary); }
         
         /* --- Map Area --- */
         .map-container { flex-grow: 1; position: relative; }
-        #map { width: 100%; height: 100%; background-color: var(--color-deep-space); }
+        #map { width: 100%; height: 100%; background-color: var(--color-bg-light); }
         .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-            background-color: rgba(13, 5, 42, 0.8) !important;
-            color: var(--color-text-secondary) !important;
-            border: 1px solid var(--color-text-secondary) !important;
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            color: var(--color-text-strong) !important;
+            border: 1px solid var(--color-border) !important;
             backdrop-filter: blur(5px);
+            box-shadow: var(--shadow-light);
         }
         .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
-            background-color: rgba(29, 15, 75, 0.9) !important;
-            color: white !important;
+            background-color: white !important;
+            color: var(--color-primary) !important;
         }
         .leaflet-marker-icon {
-            filter: drop-shadow(0 0 8px var(--color-star-gold));
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
             transition: transform 0.3s var(--ease-out-quint);
         }
         @keyframes pulse-marker {
-            0% { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--color-star-gold));}
-            50% { transform: scale(1.3); filter: drop-shadow(0 0 15px var(--color-star-gold));}
-            100% { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--color-star-gold));}
+            0% { transform: scale(1.1); filter: drop-shadow(0 5px 15px rgba(106, 90, 205, 0.4));}
+            50% { transform: scale(1.3); filter: drop-shadow(0 5px 25px rgba(106, 90, 205, 0.6));}
+            100% { transform: scale(1.1); filter: drop-shadow(0 5px 15px rgba(106, 90, 205, 0.4));}
         }
         .pulsing-marker { animation: pulse-marker 1.5s infinite; }
 
@@ -236,23 +276,28 @@
             right: 2rem;
             width: 380px;
             max-width: 90%;
-            background: rgba(26, 16, 66, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: var(--shadow-medium);
             z-index: 1000;
             transform: translateX(calc(100% + 4rem));
-            transition: transform 1s var(--ease-out-quint);
+            transition: transform 1s var(--ease-out-quint), opacity 1s var(--ease-out-quint);
             overflow: hidden;
+            opacity: 0;
+        }
+        .info-card.visible {
+            transform: translateX(0);
+            opacity: 1;
         }
         .info-card.visible { transform: translateX(0); }
         .info-card-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--color-border);
         }
         .info-card-content { padding: 1.5rem; }
         .info-card-header { margin-bottom: 1rem; }
@@ -261,20 +306,20 @@
             font-size: 1.8rem;
             line-height: 1.1;
             font-weight: 800;
-            color: white;
-            text-shadow: 0 0 5px var(--color-light-glow);
+            color: var(--color-text-strong);
         }
         .info-card-subtitle-ta { font-family: var(--font-tamil); font-size: 1.2rem; color: var(--color-text-secondary); }
         .info-card-planet-info {
             display: flex;
             align-items: center;
-            background: rgba(0,0,0,0.2);
+            background: var(--color-bg-light);
             padding: 0.5rem 1rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
+            border: 1px solid var(--color-border);
         }
-        .planet-icon { font-size: 1.5rem; margin-right: 1rem; filter: drop-shadow(0 0 5px var(--color-star-gold)); }
-        .planet-text { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-light-glow); }
+        .planet-icon { font-size: 1.5rem; margin-right: 1rem; }
+        .planet-text { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); }
         .info-card-description { font-family: var(--font-body); font-size: 1rem; line-height: 1.7; color: var(--color-text-primary); }
 
         .info-card-close-btn {
@@ -283,9 +328,9 @@
             right: 1rem;
             width: 32px;
             height: 32px;
-            background: rgba(0,0,0,0.3);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.5);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
             border-radius: 50%;
             cursor: pointer;
             display: none; /* Hidden by default */
@@ -297,7 +342,8 @@
             transition: background-color 0.3s, transform 0.3s;
         }
         .info-card-close-btn:hover {
-            background: rgba(0,0,0,0.6);
+            background: white;
+            color: var(--color-primary);
             transform: scale(1.1);
         }
 
@@ -467,8 +513,20 @@
             function populateNavAndMarkers() {
                 const fragment = document.createDocumentFragment(); // Use fragment for performance
                 const customIcon = L.icon({
-                    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9ImciIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZlYWEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmZkNTAwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNMTYgMEM3LjIgMCAwIDcuMiAwIDE2YzAgNC40IDEuOCA4LjQgNC43IDEwLjlsOS4zIDUuMSA5LjMtNS4xQzMwLjIgMjQuNCAzMiAyMC40IDMyIDE2IDMyIDcuMiAyNC44IDAgMTYgMHoiIGZpbGw9InVybCgjZykiLz4KPC9zdmc+',
-                    iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]
+                    iconUrl: `data:image/svg+xml;base64,${btoa(`
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 48">
+                            <defs>
+                                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(0,0,0,0.15)"/>
+                                </filter>
+                            </defs>
+                            <path d="M16,0 C7.163,0 0,7.163 0,16 C0,28 16,48 16,48 C16,48 32,28 32,16 C32,7.163 24.837,0 16,0 Z" fill="#ffffff" filter="url(#shadow)"/>
+                            <circle cx="16" cy="16" r="8" fill="${getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim()}"/>
+                        </svg>
+                    `)}`,
+                    iconSize: [32, 48],
+                    iconAnchor: [16, 48],
+                    popupAnchor: [0, -48]
                 });
 
                 templeData.forEach(temple => {
