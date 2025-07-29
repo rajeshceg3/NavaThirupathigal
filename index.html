@@ -13,16 +13,16 @@
 
     <style>
         :root {
-            --color-bg-light: #fdfcfa;
+            --color-bg-light: #fff0f5; /* LavenderBlush */
             --color-bg-panel: #ffffff;
-            --color-primary: #6a5acd; /* SlateBlue */
-            --color-primary-light: #e0d8ff;
-            --color-secondary: #ff8c69; /* Coral */
-            --color-accent: #ffb6c1; /* LightPink */
-            --color-text-strong: #2a2a2a;
-            --color-text-primary: #5b5b5b;
-            --color-text-secondary: #8a8a8a;
-            --color-border: #ececec;
+            --color-primary: #967bb6; /* Lavender Purple - WCAG AA compliant with white text */
+            --color-primary-light: #ffdab9; /* PeachPuff */
+            --color-secondary: #afeeee; /* PaleTurquoise */
+            --color-accent: #f0e68c; /* Khaki */
+            --color-text-strong: #4a4a4a;
+            --color-text-primary: #6c6c6c;
+            --color-text-secondary: #878787;
+            --color-border: #f0f0f0;
             --font-display: 'Manrope', sans-serif;
             --font-body: 'Lora', serif;
             --font-tamil: 'Noto Sans Tamil', sans-serif;
@@ -502,9 +502,12 @@
 
             function initMap() {
                 map = L.map('map', { center: [8.64, 77.94], zoom: 12, zoomControl: false });
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
-                    subdomains: 'abcd', maxZoom: 20
+                L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}', {
+                    attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+                    subdomains: 'abcd',
+                    minZoom: 1,
+                    maxZoom: 16,
+                    ext: 'jpg'
                 }).addTo(map);
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
             }
