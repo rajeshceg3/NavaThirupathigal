@@ -13,22 +13,28 @@
 
     <style>
         :root {
-            --color-bg-light: #fff0f5; /* LavenderBlush */
-            --color-bg-panel: #ffffff;
-            --color-primary: #967bb6; /* Lavender Purple - WCAG AA compliant with white text */
-            --color-primary-light: #ffdab9; /* PeachPuff */
-            --color-secondary: #afeeee; /* PaleTurquoise */
-            --color-accent: #f0e68c; /* Khaki */
-            --color-text-strong: #4a4a4a;
-            --color-text-primary: #6c6c6c;
-            --color-text-secondary: #878787;
-            --color-border: #f0f0f0;
-            --font-display: 'Manrope', sans-serif;
-            --font-body: 'Lora', serif;
+            /* --- Deep Cosmos Palette --- */
+            --color-bg-deep: #050511; /* Deepest Midnight */
+            --color-bg-panel: rgba(13, 18, 30, 0.75); /* Dark Glass */
+
+            --color-primary: #f59e0b; /* Celestial Gold */
+            --color-primary-glow: rgba(245, 158, 11, 0.5);
+            --color-secondary: #6366f1; /* Nebula Indigo */
+
+            --color-text-strong: #f8fafc; /* Starlight White */
+            --color-text-primary: #e2e8f0; /* Soft White */
+            --color-text-secondary: #94a3b8; /* Muted Stardust */
+
+            --color-border: rgba(255, 255, 255, 0.12);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+
+            --font-heading: 'Lora', serif;
+            --font-body: 'Manrope', sans-serif;
             --font-tamil: 'Noto Sans Tamil', sans-serif;
+
             --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
-            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.3);
         }
 
         /* --- Base & Typography --- */
@@ -42,30 +48,24 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            background-color: var(--color-bg-light);
+            background-color: var(--color-bg-deep);
             font-family: var(--font-body);
             color: var(--color-text-primary);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Animated Gradient Background --- */
+        /* --- Animated Cosmic Background --- */
         .background-pattern {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, #f3e6ff, #e6f7ff, #ffe6f0, #fff3e6);
-            background-size: 400% 400%;
-            animation: gradient-flow 20s ease infinite;
+            background: radial-gradient(circle at 15% 50%, #1e1b4b, #0f172a 40%, #020617 80%);
             z-index: -1;
         }
-        @keyframes gradient-flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* Add subtle stars via pseudo-element later if needed */
 
         /* --- Intro Screen --- */
         .intro-screen {
@@ -74,9 +74,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(5, 5, 17, 0.6);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -90,65 +90,64 @@
             pointer-events: none;
         }
         .intro-title {
-            font-family: var(--font-display);
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--color-text-strong);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            font-family: var(--font-heading);
+            font-size: 4rem;
+            font-weight: 400; /* Lora looks elegant at lighter weights */
+            font-style: italic;
+            color: var(--color-primary);
+            letter-spacing: 0.05em;
             text-align: center;
-            margin: 0 2rem 1.5rem 2.5rem; /* Optical alignment */
+            margin: 0 2rem 1rem 2.5rem;
+            text-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
             animation: text-reveal 1.5s var(--ease-out-quint) forwards;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
         }
         @keyframes text-reveal {
             to { opacity: 1; transform: translateY(0); }
         }
         .intro-subtitle {
             font-family: var(--font-body);
-            font-style: italic;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
             color: var(--color-text-primary);
-            font-size: 1.3rem;
-            margin-bottom: 3rem;
+            font-size: 1rem;
+            margin-bottom: 3.5rem;
             animation: text-reveal 1.5s var(--ease-out-quint) 0.5s forwards;
             opacity: 0;
             transform: translateY(20px);
         }
         .intro-button {
-            font-family: var(--font-display);
-            font-size: 1rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
             font-weight: 800;
-            color: #fff;
+            color: #020617;
             background: var(--color-primary);
             border: none;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
+            padding: 1rem 3rem;
+            border-radius: 2px; /* Sharper corners for modern look */
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            box-shadow: var(--shadow-medium);
-            transition: transform 0.3s var(--ease-out-quint), box-shadow 0.3s var(--ease-out-quint);
-            animation: text-reveal 1.5s var(--ease-out-quint) 1s forwards, pulse-button 2.5s infinite 2s;
+            letter-spacing: 0.15em;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.5s var(--ease-out-quint);
+            animation: text-reveal 1.5s var(--ease-out-quint) 1s forwards;
             opacity: 0;
             transform: translateY(20px);
         }
         .intro-button:hover {
-            transform: scale(1.05) translateY(20px);
-            box-shadow: 0 12px 40px rgba(106, 90, 205, 0.4);
-            animation-play-state: paused;
-        }
-        @keyframes pulse-button {
-            0% { transform: scale(1) translateY(20px); }
-            50% { transform: scale(1.03) translateY(20px); }
-            100% { transform: scale(1) translateY(20px); }
+            background: #fff;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+            transform: translateY(18px) scale(1.02);
         }
 
         /* --- Main App Layout --- */
         .app-container {
-            display: flex;
+            position: relative;
             height: 100vh;
-            background: transparent;
+            width: 100vw;
+            background: #000;
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
@@ -156,238 +155,380 @@
             opacity: 1;
         }
 
-        /* --- Left Navigation Panel --- */
-        .nav-panel {
-            width: 320px;
-            padding: 2rem 0;
-            overflow-y: auto;
-            flex-shrink: 0;
-            background: var(--color-bg-panel);
-            border-right: 1px solid var(--color-border);
-            z-index: 1000;
-        }
-        .nav-header {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 0 1.5rem;
-            color: var(--color-text-strong);
-        }
-        .temple-list { list-style: none; }
-        .temple-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-right: 4px solid transparent;
-            transition: background-color 0.4s var(--ease-out-quint), border-color 0.4s var(--ease-out-quint);
-            position: relative;
-        }
-        .temple-item:hover { background-color: var(--color-bg-light); }
-        .temple-item.active {
-            background-color: var(--color-primary-light);
-            border-right-color: var(--color-primary);
-        }
-        .temple-item.active::before {
-            content: '';
+        /* --- Map Visualization (Immersive) --- */
+        .map-container {
             position: absolute;
-            left: -2px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: var(--color-primary);
-            animation: pulse-indicator 1.5s infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
-        @keyframes pulse-indicator {
-            0% { box-shadow: 0 0 0 0 rgba(106, 90, 205, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(106, 90, 205, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(106, 90, 205, 0); }
+        #map {
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-deep);
         }
-        .temple-orb {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            margin-right: 1rem;
+
+        /* Dark Mode Map Filters */
+        .leaflet-tile-pane {
+            filter: invert(100%) hue-rotate(180deg) brightness(60%) contrast(90%) saturate(130%);
+        }
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out {
+            background-color: var(--color-bg-panel) !important;
+            color: var(--color-text-strong) !important;
+            border: var(--glass-border) !important;
+            backdrop-filter: blur(10px);
+        }
+        .leaflet-control-zoom-in:hover,
+        .leaflet-control-zoom-out:hover {
+            background-color: var(--color-primary) !important;
+            color: #000 !important;
+        }
+        .leaflet-control-attribution {
+            background: rgba(0,0,0,0.5) !important;
+            color: var(--color-text-secondary) !important;
+        }
+
+        /* --- Orb Marker Styles --- */
+        .orb-marker {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: var(--font-display);
-            font-weight: 800;
-            color: var(--color-text-secondary);
-            background: var(--color-bg-light);
-            border: 2px solid var(--color-border);
-            transition: all 0.4s var(--ease-out-quint);
+            background: transparent;
+            /* No interaction blocking */
+            pointer-events: none;
         }
-        .temple-item:hover .temple-orb {
-            border-color: var(--color-primary);
-            color: var(--color-primary);
-        }
-        .temple-item.active .temple-orb {
-            background: var(--color-primary);
-            color: white;
-            border: 2px solid var(--color-primary);
-            box-shadow: 0 0 20px rgba(106, 90, 205, 0.5);
-        }
-        .temple-name-container { display: flex; flex-direction: column; }
-        .temple-name-en {
-            font-family: var(--font-display);
-            font-weight: 800;
-            font-size: 1rem;
-            color: var(--color-text-strong);
-        }
-        .temple-name-ta { font-family: var(--font-tamil); font-size: 0.9rem; color: var(--color-text-secondary); }
-        
-        /* --- Map Area --- */
-        .map-container { flex-grow: 1; position: relative; }
-        #map { width: 100%; height: 100%; background-color: var(--color-bg-light); }
-        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-            background-color: rgba(255, 255, 255, 0.8) !important;
-            color: var(--color-text-strong) !important;
-            border: 1px solid var(--color-border) !important;
-            backdrop-filter: blur(5px);
-            box-shadow: var(--shadow-light);
-        }
-        .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
-            background-color: white !important;
-            color: var(--color-primary) !important;
-        }
-        .leaflet-marker-icon {
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+        .orb-marker > * { pointer-events: auto; } /* Children clickable */
+
+        .orb-core {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary);
+            position: relative;
             transition: transform 0.3s var(--ease-out-quint);
         }
-        @keyframes pulse-marker {
-            0% { transform: scale(1.1); filter: drop-shadow(0 5px 15px rgba(106, 90, 205, 0.4));}
-            50% { transform: scale(1.3); filter: drop-shadow(0 5px 25px rgba(106, 90, 205, 0.6));}
-            100% { transform: scale(1.1); filter: drop-shadow(0 5px 15px rgba(106, 90, 205, 0.4));}
+        .orb-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--color-primary);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: pulse-ring 3s infinite;
         }
-        .pulsing-marker { animation: pulse-marker 1.5s infinite; }
+        .orb-marker.active .orb-core {
+            transform: scale(1.5);
+            background: var(--color-primary);
+            box-shadow: 0 0 30px var(--color-primary), 0 0 60px var(--color-primary);
+        }
+        @keyframes pulse-ring {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; border-width: 2px; }
+            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; border-width: 0px; }
+        }
 
-        /* --- Info Card --- */
+        /* --- Desktop Floating Sidebar --- */
+        .nav-panel {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 380px;
+            height: calc(100vh - 4rem);
+            background: var(--color-bg-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem 0;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: var(--shadow-glass);
+            /* Scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-primary) transparent;
+        }
+        .nav-panel::-webkit-scrollbar { width: 4px; }
+        .nav-panel::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 4px; }
+
+        .nav-header {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--color-primary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .temple-list { list-style: none; padding: 0 1.5rem; }
+
+        .temple-item {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out-quint);
+            position: relative;
+            overflow: hidden;
+        }
+        .temple-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(245, 158, 11, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+        .temple-item.active {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), transparent);
+            border-left: 3px solid var(--color-primary);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .temple-index {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            margin-right: 1.5rem;
+            opacity: 0.4;
+            transition: all 0.3s;
+        }
+        .temple-item.active .temple-index {
+            color: var(--color-primary);
+            opacity: 1;
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .temple-name-container { display: flex; flex-direction: column; }
+        .temple-name-en {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--color-text-strong);
+            letter-spacing: 0.02em;
+            margin-bottom: 0.2rem;
+        }
+        .temple-name-ta {
+            font-family: var(--font-tamil);
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* --- Info Card (Floating Glass) --- */
         .info-card {
             position: absolute;
             top: 2rem;
             right: 2rem;
-            width: 380px;
-            max-width: 90%;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            width: 420px;
+            max-width: 90vw;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            background: var(--color-bg-panel);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: var(--shadow-medium);
-            z-index: 1000;
-            transform: translateX(calc(100% + 4rem));
-            transition: transform 1s var(--ease-out-quint), opacity 1s var(--ease-out-quint);
-            overflow: hidden;
+            border: var(--glass-border);
+            box-shadow: var(--shadow-glass);
+            z-index: 100;
+            transform: translateX(120%);
+            transition: transform 0.8s var(--ease-out-quint), opacity 0.5s;
             opacity: 0;
+            display: flex;
+            flex-direction: column;
         }
         .info-card.visible {
             transform: translateX(0);
             opacity: 1;
         }
-        .info-card.visible { transform: translateX(0); }
+
         .info-card-image {
             width: 100%;
-            height: 200px;
+            height: 240px;
             object-fit: cover;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
         }
-        .info-card-content { padding: 1.5rem; }
-        .info-card-header { margin-bottom: 1rem; }
+        .info-card-content { padding: 0 2rem 2rem 2rem; margin-top: -1rem; position: relative; }
+
+        .info-card-header { margin-bottom: 1.5rem; }
         .info-card-title {
-            font-family: var(--font-display);
-            font-size: 1.8rem;
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
             line-height: 1.1;
-            font-weight: 800;
+            font-weight: 400;
+            color: var(--color-primary);
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .info-card-subtitle-ta {
+            font-family: var(--font-tamil);
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .info-card-planet-info {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .planet-icon { font-size: 1.2rem; margin-right: 0.8rem; }
+        .planet-text {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 700;
             color: var(--color-text-strong);
         }
-        .info-card-subtitle-ta { font-family: var(--font-tamil); font-size: 1.2rem; color: var(--color-text-secondary); }
-        .info-card-planet-info {
-            display: flex;
-            align-items: center;
-            background: var(--color-bg-light);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--color-border);
+
+        .info-card-description {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--color-text-primary);
+            font-weight: 300;
         }
-        .planet-icon { font-size: 1.5rem; margin-right: 1rem; }
-        .planet-text { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); }
-        .info-card-description { font-family: var(--font-body); font-size: 1rem; line-height: 1.7; color: var(--color-text-primary); }
 
         .info-card-close-btn {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            width: 32px;
-            height: 32px;
-            background: rgba(255,255,255,0.5);
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.3);
             color: var(--color-text-primary);
-            border: 1px solid var(--color-border);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 50%;
             cursor: pointer;
-            display: none; /* Hidden by default */
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            font-family: sans-serif;
+            font-size: 1.5rem;
             line-height: 1;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: all 0.3s;
+            z-index: 10;
         }
         .info-card-close-btn:hover {
-            background: white;
-            color: var(--color-primary);
-            transform: scale(1.1);
+            background: var(--color-primary);
+            color: #000;
+            transform: rotate(90deg);
         }
 
-        /* --- Responsive Design --- */
-        @media (max-width: 1024px) {
-            .nav-panel { width: 250px; }
-            .info-card { width: 320px; }
+        /* --- Mobile Hyper-Optimization --- */
+        @keyframes list-enter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
+
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
+
+            /* Mobile Navigation: Horizontal Cards at Bottom */
             .nav-panel {
-                width: 100%;
+                top: auto;
+                bottom: 2rem;
+                left: 1rem;
+                right: 1rem;
+                width: auto;
                 height: auto;
-                flex-shrink: 1;
-                padding: 1rem;
-                box-shadow: 0 10px 40px -15px rgba(0,0,0,0.6);
+                max-height: none;
+                padding: 0.5rem;
+                display: flex;
+                flex-direction: row;
+                background: rgba(13, 18, 30, 0.9);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 20px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                scroll-snap-type: x mandatory;
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
             }
-            .nav-header { font-size: 1.2rem; margin-bottom: 0.5rem; }
-            .temple-list { display: flex; overflow-x: auto; padding-bottom: 1rem; -ms-overflow-style: none; scrollbar-width: none; }
-            .temple-list::-webkit-scrollbar { display: none; }
-            .temple-item { flex-direction: column; align-items: center; padding: 0.5rem; width: 120px; flex-shrink: 0; }
-            .temple-orb { margin-right: 0; margin-bottom: 0.5rem; }
-            .temple-name-container { text-align: center; }
-            .temple-name-en { font-size: 0.8rem; }
-            .temple-name-ta { font-size: 0.7rem; }
+
+            .nav-header { display: none; }
+
+            .temple-list {
+                display: flex;
+                flex-direction: row;
+                padding: 0;
+                margin: 0;
+                gap: 0.5rem;
+            }
             
+            .temple-item {
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+                width: 85px;
+                height: 85px;
+                padding: 0.5rem;
+                margin: 0;
+                border-radius: 12px;
+                background: rgba(255,255,255,0.03);
+                scroll-snap-align: start;
+                flex-shrink: 0;
+            }
+
+            .temple-index {
+                margin: 0 0 0.3rem 0;
+                font-size: 1rem;
+                opacity: 0.6;
+            }
+
+            .temple-name-container { width: 100%; }
+            .temple-name-en {
+                font-size: 0.7rem;
+                white-space: normal;
+                line-height: 1.1;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            .temple-name-ta { display: none; }
+
+            /* Mobile Info Sheet */
             .info-card {
+                width: 100%;
+                max-width: 100%;
+                height: 85vh;
                 top: auto;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                width: 100%;
-                max-width: 100%;
-                border-radius: 16px 16px 0 0;
-                transform: translateY(100%);
-                border-width: 1px 0 0 0;
+                border-radius: 24px 24px 0 0;
+                border-bottom: none;
+                transform: translateY(110%);
+                z-index: 200;
             }
-            .info-card.visible { transform: translateY(0); }
-            .info-card-image { height: 120px; }
-            .info-card-content { padding: 1rem; }
-            .info-card-title { font-size: 1.5rem; }
-            .info-card-close-btn { display: flex; } /* Show close button on mobile */
-            .intro-title { font-size: 2rem; }
+            .info-card.visible {
+                transform: translateY(0);
+            }
+            .info-card-image { height: 200px; }
+            .info-card-content { padding: 1.5rem; padding-bottom: 4rem; /* Safe area */ }
+
+            /* Map Adjustments */
+            .leaflet-control-zoom { display: none; }
+            .leaflet-control-attribution { display: none; } /* Too cluttered on mobile */
+
+            .intro-title { font-size: 2.2rem; margin: 0 1rem 1rem 1rem; }
+            .intro-button { padding: 1rem 2rem; width: 80%; text-align: center; }
         }
     </style>
 </head>
@@ -475,7 +616,7 @@
 
                 // Update Markers
                 markers.forEach((marker, index) => {
-                    marker.getElement()?.classList.toggle('pulsing-marker', index === activeTempleId);
+                    marker.getElement()?.classList.toggle('active', index === activeTempleId);
                 });
 
                 if (activeTempleId !== null) {
@@ -514,40 +655,42 @@
 
             // Optimized population function
             function populateNavAndMarkers() {
-                const fragment = document.createDocumentFragment(); // Use fragment for performance
-                const customIcon = L.icon({
-                    iconUrl: `data:image/svg+xml;base64,${btoa(`
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 48">
-                            <defs>
-                                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(0,0,0,0.15)"/>
-                                </filter>
-                            </defs>
-                            <path d="M16,0 C7.163,0 0,7.163 0,16 C0,28 16,48 16,48 C16,48 32,28 32,16 C32,7.163 24.837,0 16,0 Z" fill="#ffffff" filter="url(#shadow)"/>
-                            <circle cx="16" cy="16" r="8" fill="${getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim()}"/>
-                        </svg>
-                    `)}`,
-                    iconSize: [32, 48],
-                    iconAnchor: [16, 48],
-                    popupAnchor: [0, -48]
+                const fragment = document.createDocumentFragment();
+
+                // Custom DivIcon for CSS-only styling (Slick & Performant)
+                const customIcon = L.divIcon({
+                    className: 'orb-marker',
+                    html: '<div class="orb-core"></div><div class="orb-ring"></div>',
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20]
                 });
 
-                templeData.forEach(temple => {
+                templeData.forEach((temple, index) => {
                     // Create Nav Item
                     const li = document.createElement('li');
                     li.className = 'temple-item';
-                    li.innerHTML = `<div class="temple-orb">${temple.id + 1}</div><div class="temple-name-container"><span class="temple-name-en">${temple.name}</span><span class="temple-name-ta">${temple.tamilName}</span></div>`;
+                    // Staggered Entry Animation
+                    li.style.opacity = '0';
+                    li.style.animation = `list-enter 0.6s var(--ease-out-quint) ${index * 0.08 + 0.2}s forwards`;
+
+                    li.innerHTML = `
+                        <span class="temple-index">${String(index + 1).padStart(2, '0')}</span>
+                        <div class="temple-name-container">
+                            <span class="temple-name-en">${temple.name}</span>
+                            <span class="temple-name-ta">${temple.tamilName}</span>
+                        </div>
+                    `;
                     li.addEventListener('click', () => setActiveTemple(temple.id));
                     fragment.appendChild(li);
 
-                    // Create Map Marker with Bidirectional Link
+                    // Create Map Marker
                     const marker = L.marker(temple.coords, { icon: customIcon }).addTo(map);
-                    marker.on('click', () => setActiveTemple(temple.id)); // <-- BUG FIX: Bidirectional interaction
+                    marker.on('click', () => setActiveTemple(temple.id));
                     markers.push(marker);
                 });
 
-                templeList.appendChild(fragment); // Single DOM insertion
-                templeNavItems = Array.from(templeList.children); // Cache DOM nodes
+                templeList.appendChild(fragment);
+                templeNavItems = Array.from(templeList.children);
             }
 
             // --- Event Listeners & Initialization ---
