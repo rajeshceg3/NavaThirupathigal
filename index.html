@@ -13,35 +13,42 @@
 
     <style>
         :root {
-            /* --- Deep Cosmos Palette --- */
-            --color-bg-deep: #050511; /* Deepest Midnight */
-            --color-bg-panel: rgba(13, 18, 30, 0.75); /* Dark Glass */
+            /* --- Deep Cosmos Palette (Refined) --- */
+            --color-bg-deep: #020617; /* Void Black */
+            --color-bg-panel: rgba(15, 23, 42, 0.65); /* Ultra-thin Glass */
+            --color-bg-panel-mobile: rgba(2, 6, 23, 0.95);
 
-            --color-primary: #f59e0b; /* Celestial Gold */
-            --color-primary-glow: rgba(245, 158, 11, 0.5);
-            --color-secondary: #6366f1; /* Nebula Indigo */
+            --color-primary: #fbbf24; /* Amber Gold */
+            --color-primary-glow: rgba(251, 191, 36, 0.6);
+            --color-secondary: #818cf8; /* Indigo */
 
-            --color-text-strong: #f8fafc; /* Starlight White */
-            --color-text-primary: #e2e8f0; /* Soft White */
-            --color-text-secondary: #94a3b8; /* Muted Stardust */
+            --color-text-strong: #ffffff;
+            --color-text-primary: #e2e8f0;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #64748b;
 
-            --color-border: rgba(255, 255, 255, 0.12);
+            --color-border: rgba(255, 255, 255, 0.1);
             --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --glass-shine: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
 
             --font-heading: 'Lora', serif;
             --font-body: 'Manrope', sans-serif;
             --font-tamil: 'Noto Sans Tamil', sans-serif;
 
             --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.3);
+            --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            --shadow-glow: 0 0 30px rgba(251, 191, 36, 0.25);
+            --shadow-elevation-low: 0 2px 8px rgba(0,0,0,0.4);
         }
 
         /* --- Base & Typography --- */
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -51,6 +58,7 @@
             background-color: var(--color-bg-deep);
             font-family: var(--font-body);
             color: var(--color-text-primary);
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -62,10 +70,48 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 15% 50%, #1e1b4b, #0f172a 40%, #020617 80%);
-            z-index: -1;
+            background: linear-gradient(to bottom, #0f172a 0%, #020617 100%);
+            z-index: -2;
         }
-        /* Add subtle stars via pseudo-element later if needed */
+
+        /* Dynamic Star Field */
+        .stars, .stars2, .stars3 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .stars::after {
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: 154px 346px #FFF , 643px 880px #FFF , 1802px 512px #FFF , 424px 1256px #FFF , 1276px 1475px #FFF , 856px 426px #FFF , 1532px 112px #FFF , 943px 1863px #FFF , 261px 852px #FFF , 1134px 621px #FFF , 1654px 1432px #FFF , 532px 1745px #FFF , 143px 1324px #FFF , 1892px 234px #FFF , 743px 1563px #FFF , 1324px 956px #FFF;
+            animation: animStar 50s linear infinite;
+        }
+
+        .stars2::after {
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: 254px 446px #FFF , 743px 980px #FFF , 1902px 612px #FFF , 524px 1356px #FFF , 1376px 1575px #FFF , 956px 526px #FFF , 1632px 212px #FFF , 1043px 1963px #FFF;
+            animation: animStar 100s linear infinite;
+        }
+
+        @keyframes animStar {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-2000px); }
+        }
 
         /* --- Intro Screen --- */
         .intro-screen {
@@ -237,18 +283,17 @@
             position: absolute;
             top: 2rem;
             left: 2rem;
-            width: 380px;
+            width: 400px;
             height: calc(100vh - 4rem);
             background: var(--color-bg-panel);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: var(--glass-border);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem 0;
             overflow-y: auto;
             z-index: 100;
             box-shadow: var(--shadow-glass);
-            /* Scrollbar styling */
             scrollbar-width: thin;
             scrollbar-color: var(--color-primary) transparent;
         }
@@ -257,7 +302,7 @@
 
         .nav-header {
             font-family: var(--font-heading);
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: var(--color-primary);
             letter-spacing: 0.15em;
             text-transform: uppercase;
@@ -265,64 +310,96 @@
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
         }
 
         .temple-list { list-style: none; padding: 0 1.5rem; }
 
+        /* Desktop List Item Style */
         .temple-item {
-            display: flex;
+            display: grid;
+            grid-template-columns: 60px 1fr 4px;
             align-items: center;
-            padding: 1.2rem 1.5rem;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
             margin-bottom: 0.8rem;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s var(--ease-out-quint);
             position: relative;
             overflow: hidden;
         }
         .temple-item:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: rgba(245, 158, 11, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .temple-item.active {
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), transparent);
-            border-left: 3px solid var(--color-primary);
-            border-color: rgba(245, 158, 11, 0.4);
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), transparent);
+            border-color: rgba(251, 191, 36, 0.3);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.05);
+        }
+
+        /* Desktop Avatar/Thumbnail */
+        .temple-card-bg {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .temple-card-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .temple-item:hover .temple-card-bg img { transform: scale(1.1); }
+        .temple-card-overlay { display: none; } /* Hide overlay on desktop list */
+
+        .temple-content {
+            display: flex;
+            align-items: center;
         }
 
         .temple-index {
             font-family: var(--font-heading);
             font-size: 1.2rem;
-            color: var(--color-text-secondary);
-            margin-right: 1.5rem;
-            opacity: 0.4;
-            transition: all 0.3s;
+            font-weight: 700;
+            color: var(--color-text-muted);
+            margin-right: 1rem;
+            min-width: 25px;
         }
-        .temple-item.active .temple-index {
-            color: var(--color-primary);
-            opacity: 1;
-            text-shadow: 0 0 10px var(--color-primary);
-        }
+        .temple-item.active .temple-index { color: var(--color-primary); text-shadow: 0 0 10px var(--color-primary); }
 
-        .temple-name-container { display: flex; flex-direction: column; }
+        .temple-info { display: flex; flex-direction: column; }
         .temple-name-en {
             font-family: var(--font-body);
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: var(--color-text-strong);
-            letter-spacing: 0.02em;
-            margin-bottom: 0.2rem;
+            margin-bottom: 2px;
         }
         .temple-name-ta {
             font-family: var(--font-tamil);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--color-text-secondary);
         }
+
+        .active-indicator {
+            width: 4px;
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 2px;
+            opacity: 0;
+            box-shadow: 0 0 10px var(--color-primary);
+            transition: opacity 0.3s;
+        }
+        .temple-item.active .active-indicator { opacity: 1; }
 
         /* --- Info Card (Floating Glass) --- */
         .info-card {
@@ -438,70 +515,121 @@
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
 
-            /* Mobile Navigation: Horizontal Cards at Bottom */
+            /* Mobile Navigation: Horizontal Carousel */
             .nav-panel {
                 top: auto;
-                bottom: 2rem;
+                bottom: 1.5rem;
                 left: 1rem;
                 right: 1rem;
                 width: auto;
                 height: auto;
                 max-height: none;
-                padding: 0.5rem;
+                padding: 0;
                 display: flex;
                 flex-direction: row;
-                background: rgba(13, 18, 30, 0.9);
-                border: 1px solid rgba(255,255,255,0.1);
-                border-radius: 20px;
+                background: transparent;
+                border: none;
                 overflow-x: auto;
                 overflow-y: hidden;
                 white-space: nowrap;
                 scroll-snap-type: x mandatory;
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+                box-shadow: none;
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
             }
+            .nav-panel::-webkit-scrollbar { display: none; } /* Hide scrollbar */
 
             .nav-header { display: none; }
 
             .temple-list {
                 display: flex;
                 flex-direction: row;
-                padding: 0;
-                margin: 0;
-                gap: 0.5rem;
+                padding: 0 0.5rem;
+                gap: 1rem;
+                margin-bottom: 1rem; /* Space for scroll */
             }
             
+            /* Mobile Card Style */
             .temple-item {
-                flex-direction: column;
-                justify-content: center;
-                text-align: center;
-                width: 85px;
-                height: 85px;
-                padding: 0.5rem;
+                display: block; /* Reset grid */
+                width: 140px;
+                height: 200px;
+                padding: 0;
                 margin: 0;
-                border-radius: 12px;
-                background: rgba(255,255,255,0.03);
-                scroll-snap-align: start;
+                border-radius: 16px;
+                background: var(--color-bg-panel-mobile);
+                scroll-snap-align: center;
                 flex-shrink: 0;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                border: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .temple-item:hover { transform: none; } /* Disable desktop hover */
+
+            .temple-item.active {
+                background: var(--color-bg-panel-mobile);
+                border: 2px solid var(--color-primary);
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            }
+
+            /* Mobile Image Cover */
+            .temple-card-bg {
+                width: 100%;
+                height: 100%;
+                border-radius: 16px;
+                border: none;
+                position: absolute;
+                top: 0; left: 0;
+                z-index: 0;
+            }
+            .temple-card-overlay {
+                display: block;
+                position: absolute;
+                bottom: 0; left: 0; width: 100%; height: 80%;
+                background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+                z-index: 1;
+                border-radius: 0 0 16px 16px;
+            }
+
+            /* Mobile Content Overlay */
+            .temple-content {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 1rem;
+                z-index: 2;
             }
 
             .temple-index {
-                margin: 0 0 0.3rem 0;
-                font-size: 1rem;
-                opacity: 0.6;
+                position: absolute;
+                top: 0.8rem;
+                left: 0.8rem;
+                font-size: 0.9rem;
+                background: rgba(0,0,0,0.6);
+                padding: 2px 8px;
+                border-radius: 12px;
+                margin: 0;
+                backdrop-filter: blur(4px);
+                color: var(--color-primary);
             }
+            .temple-item.active .temple-index { color: var(--color-primary); }
 
-            .temple-name-container { width: 100%; }
+            .temple-info { display: flex; flex-direction: column; white-space: normal; }
             .temple-name-en {
-                font-size: 0.7rem;
-                white-space: normal;
-                line-height: 1.1;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
+                font-size: 0.85rem;
+                line-height: 1.2;
+                margin-bottom: 4px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.8);
             }
-            .temple-name-ta { display: none; }
+            .temple-name-ta { display: none; } /* Hide Tamil on mobile card for space */
+
+            .active-indicator { display: none; } /* Use border instead */
 
             /* Mobile Info Sheet */
             .info-card {
@@ -516,16 +644,17 @@
                 border-bottom: none;
                 transform: translateY(110%);
                 z-index: 200;
+                background: var(--color-bg-panel-mobile);
             }
             .info-card.visible {
                 transform: translateY(0);
             }
-            .info-card-image { height: 200px; }
-            .info-card-content { padding: 1.5rem; padding-bottom: 4rem; /* Safe area */ }
+            .info-card-image { height: 250px; }
+            .info-card-content { padding: 1.5rem; padding-bottom: 6rem; /* Safe area for bottom nav */ }
 
             /* Map Adjustments */
             .leaflet-control-zoom { display: none; }
-            .leaflet-control-attribution { display: none; } /* Too cluttered on mobile */
+            .leaflet-control-attribution { display: none; }
 
             .intro-title { font-size: 2.2rem; margin: 0 1rem 1rem 1rem; }
             .intro-button { padding: 1rem 2rem; width: 80%; text-align: center; }
@@ -535,6 +664,8 @@
 <body>
 
     <div class="background-pattern"></div>
+    <div class="stars"></div>
+    <div class="stars2"></div>
     
     <div class="intro-screen" id="intro-screen">
         <h1 class="intro-title">Nava Thirupathigal</h1>
@@ -666,25 +797,42 @@
                 });
 
                 templeData.forEach((temple, index) => {
-                    // Create Nav Item
+                    // Create Nav Item (Enhanced Structure for Cards/List)
                     const li = document.createElement('li');
                     li.className = 'temple-item';
+                    li.setAttribute('role', 'button');
+                    li.setAttribute('aria-label', `Select ${temple.name}`);
+
                     // Staggered Entry Animation
                     li.style.opacity = '0';
                     li.style.animation = `list-enter 0.6s var(--ease-out-quint) ${index * 0.08 + 0.2}s forwards`;
 
                     li.innerHTML = `
-                        <span class="temple-index">${String(index + 1).padStart(2, '0')}</span>
-                        <div class="temple-name-container">
-                            <span class="temple-name-en">${temple.name}</span>
-                            <span class="temple-name-ta">${temple.tamilName}</span>
+                        <div class="temple-card-bg">
+                            <img src="${temple.image}" alt="" loading="lazy">
+                            <div class="temple-card-overlay"></div>
                         </div>
+                        <div class="temple-content">
+                            <span class="temple-index">${String(index + 1).padStart(2, '0')}</span>
+                            <div class="temple-info">
+                                <span class="temple-name-en">${temple.name}</span>
+                                <span class="temple-name-ta">${temple.tamilName}</span>
+                            </div>
+                        </div>
+                        <div class="active-indicator"></div>
                     `;
+
                     li.addEventListener('click', () => setActiveTemple(temple.id));
                     fragment.appendChild(li);
 
                     // Create Map Marker
                     const marker = L.marker(temple.coords, { icon: customIcon }).addTo(map);
+                    marker.bindTooltip(temple.name, {
+                        permanent: false,
+                        direction: 'top',
+                        className: 'marker-tooltip',
+                        offset: [0, -20]
+                    });
                     marker.on('click', () => setActiveTemple(temple.id));
                     markers.push(marker);
                 });
