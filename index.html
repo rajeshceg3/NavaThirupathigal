@@ -330,16 +330,34 @@
             text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
         }
 
-        .temple-list { list-style: none; padding: 0 1.5rem; }
+        .temple-list {
+            display: flex;
+            flex-direction: column;
+            padding: 0 1.5rem;
+            gap: 0.8rem;
+        }
 
         /* Desktop List Item Style */
         .temple-item {
+            /* --- Button Reset --- */
+            border: none;
+            background: transparent;
+            font: inherit;
+            color: inherit;
+            text-align: inherit;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+
+            /* --- Original Styles --- */
             display: grid;
             grid-template-columns: 60px 1fr 4px;
             align-items: center;
             gap: 1rem;
             padding: 0.8rem 1rem;
-            margin-bottom: 0.8rem;
+            /* margin-bottom replaced by gap in parent */
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.03);
             border-radius: 12px;
@@ -705,6 +723,25 @@
             .map-error-content p {
                 font-size: 1rem;
                 color: var(--color-text-secondary);
+                margin-bottom: 2rem;
+            }
+            .retry-button {
+                font-family: var(--font-body);
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: var(--color-bg-deep);
+                background: var(--color-secondary);
+                border: none;
+                padding: 0.8rem 2rem;
+                border-radius: 4px;
+                cursor: pointer;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                transition: all 0.3s;
+            }
+            .retry-button:hover {
+                background: #fff;
+                box-shadow: 0 0 20px rgba(255,255,255,0.3);
             }
 
             .intro-title { font-size: 2.2rem; margin: 0 1rem 1rem 1rem; }
@@ -728,10 +765,10 @@
         <button class="intro-button" id="intro-button">Begin the Journey</button>
     </div>
 
-    <div class="app-container" id="app-container">
+    <div class="app-container" id="app-container" aria-live="polite">
         <nav class="nav-panel">
             <h2 class="nav-header">The Constellation</h2>
-            <ul class="temple-list" id="temple-list"></ul>
+            <div class="temple-list" id="temple-list"></div>
         </nav>
         <main class="map-container">
             <div id="map"></div>
@@ -739,6 +776,7 @@
                 <div class="map-error-content">
                     <h3>Map Data Unattainable</h3>
                     <p>Could not connect to the celestial cartographers. Please check your network connection.</p>
+                    <button class="retry-button" id="retry-map-button">Retry Connection</button>
                 </div>
             </div>
             <div class="info-card" id="info-card" aria-live="polite">
@@ -789,14 +827,25 @@
             let markers = [];
             let templeNavItems = [];
             let activeTempleId = null; // SINGLE SOURCE OF TRUTH
+            let lastFocusedElement = null;
+            let tileLayer;
 
             // --- Core Functions ---
             
             // Centralized State Mutator: The only way to change the active temple
             function setActiveTemple(id) {
                 if (id === activeTempleId) return; // Do nothing if already active
+
+                if (id !== null) {
+                    lastFocusedElement = document.activeElement;
+                }
+
                 activeTempleId = id;
                 render();
+
+                if (activeTempleId === null && lastFocusedElement) {
+                    lastFocusedElement.focus();
+                }
             }
 
             // Declarative Render Function: Updates the entire UI based on the current state
@@ -824,7 +873,7 @@
                     const imgEl = document.getElementById('info-card-image');
                     imgEl.style.display = 'block';
                     imgEl.src = temple.image;
-                    imgEl.alt = temple.name;
+                    imgEl.alt = `Architectural view of ${temple.name}`;
                     imgEl.onerror = function() { this.style.display = 'none'; };
 
                     document.getElementById('info-card-title').textContent = temple.name;
@@ -834,6 +883,11 @@
                     document.getElementById('info-card-description').textContent = temple.description;
                     infoCard.classList.add('visible');
                     
+                    // Focus management
+                    infoCard.addEventListener('transitionend', () => {
+                        document.getElementById('info-card-close-btn').focus();
+                    }, { once: true });
+
                     // Fly map to location
                     map.flyTo(temple.coords, 15, { animate: true, duration: 1.5 });
 
@@ -846,7 +900,7 @@
             function initMap() {
                 const mapErrorOverlay = document.getElementById('map-error-overlay');
                 map = L.map('map', { center: [8.64, 77.94], zoom: 12, zoomControl: false });
-                const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                     subdomains: 'abcd',
                     minZoom: 1,
@@ -876,38 +930,60 @@
 
                 templeData.forEach((temple, index) => {
                     // Create Nav Item (Enhanced Structure for Cards/List)
-                    const li = document.createElement('li');
-                    li.className = 'temple-item';
-                    li.setAttribute('role', 'button');
-                    li.setAttribute('tabindex', '0');
-                    li.setAttribute('aria-label', `Select ${temple.name}`);
+                    const button = document.createElement('button');
+                    button.className = 'temple-item';
+                    button.setAttribute('aria-label', `Select ${temple.name}`);
 
                     // Staggered Entry Animation
-                    li.style.opacity = '0';
-                    li.style.animation = `list-enter 0.6s var(--ease-out-quint) ${index * 0.08 + 0.2}s forwards`;
+                    button.style.opacity = '0';
+                    button.style.animation = `list-enter 0.6s var(--ease-out-quint) ${index * 0.08 + 0.2}s forwards`;
 
-                    li.innerHTML = `
-                        <div class="temple-card-bg">
-                            <img src="${temple.image}" alt="Image of ${temple.name}" loading="lazy" onerror="this.closest('li').style.display='none'">
-                            <div class="temple-card-overlay"></div>
-                        </div>
-                        <div class="temple-content">
-                            <span class="temple-index">${String(index + 1).padStart(2, '0')}</span>
-                            <div class="temple-info">
-                                <span class="temple-name-en">${temple.name}</span>
-                                <span class="temple-name-ta">${temple.tamilName}</span>
-                            </div>
-                        </div>
-                        <div class="active-indicator"></div>
-                    `;
+                    // --- Secure DOM Creation (prevents XSS) ---
+                    const cardBg = document.createElement('div');
+                    cardBg.className = 'temple-card-bg';
 
-                    li.addEventListener('click', () => setActiveTemple(temple.id));
-                    li.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            setActiveTemple(temple.id);
-                        }
-                    });
-                    fragment.appendChild(li);
+                    const img = document.createElement('img');
+                    img.src = temple.image;
+                    img.alt = `Image of ${temple.name}`;
+                    img.loading = 'lazy';
+                    img.onerror = function() { this.style.display = 'none'; };
+                    cardBg.appendChild(img);
+
+                    const overlay = document.createElement('div');
+                    overlay.className = 'temple-card-overlay';
+                    cardBg.appendChild(overlay);
+
+                    const content = document.createElement('div');
+                    content.className = 'temple-content';
+
+                    const indexSpan = document.createElement('span');
+                    indexSpan.className = 'temple-index';
+                    indexSpan.textContent = String(index + 1).padStart(2, '0');
+                    content.appendChild(indexSpan);
+
+                    const info = document.createElement('div');
+                    info.className = 'temple-info';
+
+                    const nameEn = document.createElement('span');
+                    nameEn.className = 'temple-name-en';
+                    nameEn.textContent = temple.name;
+                    info.appendChild(nameEn);
+
+                    const nameTa = document.createElement('span');
+                    nameTa.className = 'temple-name-ta';
+                    nameTa.textContent = temple.tamilName;
+                    info.appendChild(nameTa);
+
+                    content.appendChild(info);
+
+                    const indicator = document.createElement('div');
+                    indicator.className = 'active-indicator';
+
+                    button.append(cardBg, content, indicator);
+                    // --- End Secure DOM Creation ---
+
+                    button.addEventListener('click', () => setActiveTemple(temple.id));
+                    fragment.appendChild(button);
 
                     // Create Map Marker
                     const marker = L.marker(temple.coords, { icon: customIcon }).addTo(map);
@@ -937,8 +1013,43 @@
             });
             
             infoCardCloseBtn.addEventListener('click', () => {
-                setActiveTemple(null); // BUG FIX: Allows closing the info card
+                setActiveTemple(null);
             });
+
+            infoCard.addEventListener('keydown', handleFocusTrap);
+
+            function handleFocusTrap(e) {
+                if (e.key !== 'Tab') return;
+
+                const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+                const focusableContent = infoCard.querySelectorAll(focusableElements);
+                const firstFocusable = focusableContent[0];
+                const lastFocusable = focusableContent[focusableContent.length - 1];
+
+                if (e.shiftKey) { // if shift key pressed for shift + tab combination
+                    if (document.activeElement === firstFocusable) {
+                        lastFocusable.focus(); // move focus to the last focusable element
+                        e.preventDefault();
+                    }
+                } else { // if tab key is pressed
+                    if (document.activeElement === lastFocusable) { // if focused has reached to last focusable element
+                        firstFocusable.focus(); // move focus to the first focusable element
+                        e.preventDefault();
+                    }
+                }
+            }
+
+            function retryMapConnection() {
+                const mapErrorOverlay = document.getElementById('map-error-overlay');
+                mapErrorOverlay.classList.remove('visible');
+                if (tileLayer) {
+                    // Re-add layer to trigger reload
+                    tileLayer.remove();
+                    tileLayer.addTo(map);
+                }
+            }
+
+            document.getElementById('retry-map-button').addEventListener('click', retryMapConnection);
 
             // --- Initializer ---
             initMap();
