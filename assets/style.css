@@ -201,6 +201,9 @@ html, body {
 #map {
     width: 100%;
     height: 100%;
+    /* Isolate stacking context so map internal z-indices don't overlap UI overlays */
+    position: relative;
+    z-index: 0;
     background-color: var(--color-bg-deep);
     /* Sci-fi grid fallback */
     background-image:
