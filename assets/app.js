@@ -89,10 +89,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('info-card-description').textContent = temple.description;
 
             // Focus management
-            infoCard.removeEventListener('transitionend', focusCloseBtn);
-            infoCard.addEventListener('transitionend', focusCloseBtn, { once: true });
-
+            const isAlreadyVisible = infoCard.classList.contains('visible');
             infoCard.classList.add('visible');
+
+            if (isAlreadyVisible) {
+                // If already visible, focus immediately as no transition will occur
+                document.getElementById('info-card-close-btn').focus();
+            } else {
+                infoCard.removeEventListener('transitionend', focusCloseBtn);
+                infoCard.addEventListener('transitionend', focusCloseBtn, { once: true });
+            }
 
             // Fly map to location
             map.flyTo(temple.coords, 15, { animate: true, duration: 1.5 });
