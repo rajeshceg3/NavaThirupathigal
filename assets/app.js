@@ -71,6 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update and show info card
             const imgEl = document.getElementById('info-card-image');
             imgEl.style.display = 'block';
+            imgEl.style.opacity = '0';
+            imgEl.style.transition = 'opacity 0.6s ease';
+
+            imgEl.onload = function() {
+                this.style.opacity = '1';
+            };
+
             imgEl.src = temple.image;
             imgEl.alt = `Architectural view of ${temple.name}`;
             imgEl.onerror = function() { this.style.display = 'none'; };
