@@ -1,32 +1,33 @@
 :root {
     /* --- Deep Cosmos Palette (Refined) --- */
-    --color-bg-deep: #020617; /* Void Black */
-    --color-bg-panel: rgba(15, 23, 42, 0.65); /* Ultra-thin Glass */
-    --color-bg-panel-mobile: rgba(2, 6, 23, 0.95);
+    --color-bg-deep: #01030d; /* Void Black */
+    --color-bg-panel: rgba(10, 15, 30, 0.75); /* Deep Glass */
+    --color-bg-panel-mobile: rgba(1, 3, 13, 0.98);
 
-    --color-primary: #fbbf24; /* Amber Gold */
-    --color-primary-glow: rgba(251, 191, 36, 0.6);
-    --color-secondary: #818cf8; /* Indigo */
+    --color-primary: #fbbf24; /* Amber 400 */
+    --color-primary-dark: #d97706; /* Amber 600 */
+    --color-primary-glow: rgba(251, 191, 36, 0.5);
+    --color-secondary: #6366f1; /* Indigo 500 */
+    --color-secondary-glow: rgba(99, 102, 241, 0.5);
 
-    --color-text-strong: #ffffff;
+    --color-text-strong: #f8fafc;
     --color-text-primary: #e2e8f0;
     --color-text-secondary: #94a3b8;
     --color-text-muted: #64748b;
 
-    --color-border: rgba(255, 255, 255, 0.1);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-    --glass-shine: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+    --color-border: rgba(255, 255, 255, 0.08);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.06);
+    --glass-highlight: rgba(255, 255, 255, 0.05);
 
     --font-heading: 'Lora', serif;
     --font-body: 'Manrope', sans-serif;
     --font-tamil: 'Noto Sans Tamil', sans-serif;
 
-    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-    --shadow-glow: 0 0 30px rgba(251, 191, 36, 0.25);
-    --shadow-elevation-low: 0 2px 8px rgba(0,0,0,0.4);
+    --shadow-glass: 0 16px 40px -10px rgba(0, 0, 0, 0.9);
+    --shadow-glow: 0 0 40px rgba(251, 191, 36, 0.15);
 }
 
 /* --- Base & Typography --- */
@@ -248,14 +249,18 @@ html, body {
 
 /* Dark Mode Map Filters */
 .leaflet-tile-pane {
-    filter: invert(100%) hue-rotate(180deg) brightness(60%) contrast(90%) saturate(130%);
+    /* Adjusted for a deep blue "Midnight Cosmos" look */
+    filter: invert(100%) hue-rotate(200deg) brightness(70%) contrast(85%) saturate(110%);
 }
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
     background-color: var(--color-bg-panel) !important;
     color: var(--color-text-strong) !important;
     border: var(--glass-border) !important;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
+    border-radius: 8px !important;
+    margin-bottom: 5px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
 }
 .leaflet-control-zoom-in:hover,
 .leaflet-control-zoom-out:hover {
@@ -265,6 +270,8 @@ html, body {
 .leaflet-control-attribution {
     background: rgba(0,0,0,0.5) !important;
     color: var(--color-text-secondary) !important;
+    font-size: 0.7rem !important;
+    backdrop-filter: blur(4px);
 }
 
 /* --- Orb Marker Styles --- */
@@ -279,33 +286,39 @@ html, body {
 .orb-marker > * { pointer-events: auto; } /* Children clickable */
 
 .orb-core {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background: #fff;
     border-radius: 50%;
-    box-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary);
+    box-shadow: 0 0 15px var(--color-primary), 0 0 30px var(--color-primary);
     position: relative;
-    transition: transform 0.3s var(--ease-out-quint);
+    transition: all 0.5s var(--ease-elastic);
+    z-index: 2;
 }
 .orb-ring {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border: 1px solid var(--color-primary);
     border-radius: 50%;
-    opacity: 0.5;
-    animation: pulse-ring 3s infinite;
+    opacity: 0.6;
+    animation: pulse-ring 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+.orb-marker:hover .orb-core {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px var(--color-primary), 0 0 40px var(--color-primary);
 }
 .orb-marker.active .orb-core {
-    transform: scale(1.5);
+    transform: scale(1.6);
     background: var(--color-primary);
-    box-shadow: 0 0 30px var(--color-primary), 0 0 60px var(--color-primary);
+    box-shadow: 0 0 40px var(--color-primary), 0 0 80px var(--color-primary);
 }
 @keyframes pulse-ring {
     0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; border-width: 2px; }
-    100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; border-width: 0px; }
+    50% { opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(3); opacity: 0; border-width: 0px; }
 }
 
 /* Tooltip Style */
@@ -329,41 +342,46 @@ html, body {
     position: absolute;
     top: 2rem;
     left: 2rem;
-    width: 400px;
+    width: 380px;
     height: calc(100vh - 4rem);
     background: var(--color-bg-panel);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
     border: var(--glass-border);
-    border-radius: 16px;
-    padding: 2rem 0;
+    box-shadow: inset 0 0 0 1px var(--glass-highlight), var(--shadow-glass);
+    border-radius: 12px;
+    padding: 0;
     overflow-y: auto;
     z-index: 100;
-    box-shadow: var(--shadow-glass);
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
+    transition: transform 0.4s var(--ease-out-quint);
 }
-.nav-panel::-webkit-scrollbar { width: 6px; }
-.nav-panel::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 4px; }
+.nav-panel::-webkit-scrollbar { width: 4px; }
+.nav-panel::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 2px; }
 
 .nav-header {
     font-family: var(--font-heading);
-    font-size: 1.4rem;
-    color: var(--color-primary);
-    letter-spacing: 0.15em;
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+    text-align: left;
+    color: var(--color-text-secondary);
+    padding: 2rem 2rem 1rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(20px);
 }
 
 .temple-list {
     display: flex;
     flex-direction: column;
-    padding: 0 1.5rem;
-    gap: 0.8rem;
+    padding: 1.5rem;
+    gap: 0.6rem;
 }
 
 /* Desktop List Item Style */
@@ -382,48 +400,50 @@ html, body {
 
     /* --- Original Styles --- */
     display: grid;
-    grid-template-columns: 60px 1fr 4px;
+    grid-template-columns: 48px 1fr 2px;
     align-items: center;
-    gap: 1rem;
-    padding: 0.8rem 1rem;
-    /* margin-bottom replaced by gap in parent */
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.03);
-    border-radius: 12px;
+    gap: 1.2rem;
+    padding: 0.8rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s var(--ease-out-quint);
+    transition: all 0.25s var(--ease-out-quint);
     position: relative;
     overflow: hidden;
-    will-change: transform;
+    will-change: transform, background-color;
 }
 .temple-item:hover {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.1);
-    transform: translateX(5px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
 }
 .temple-item.active {
-    background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), transparent);
-    border-color: rgba(251, 191, 36, 0.3);
-    box-shadow: 0 0 30px rgba(251, 191, 36, 0.05);
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.08) 0%, transparent 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.05);
 }
 
 /* Desktop Avatar/Thumbnail */
 .temple-card-bg {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
     overflow: hidden;
     position: relative;
+    background: #000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.1);
 }
 .temple-card-bg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.5s ease;
 }
-.temple-item:hover .temple-card-bg img { transform: scale(1.1); }
+.temple-item:hover .temple-card-bg img { opacity: 1; transform: scale(1.1); }
+.temple-item.active .temple-card-bg img { opacity: 1; }
 .temple-card-overlay { display: none; } /* Hide overlay on desktop list */
 
 .temple-content {
@@ -471,79 +491,85 @@ html, body {
     position: absolute;
     top: 2rem;
     right: 2rem;
-    width: 420px;
+    width: 480px;
     max-width: 90vw;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
     background: var(--color-bg-panel);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-radius: 16px;
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+    border-radius: 12px;
     border: var(--glass-border);
-    box-shadow: var(--shadow-glass);
+    box-shadow: inset 0 0 0 1px var(--glass-highlight), var(--shadow-glass);
     z-index: 100;
-    transform: translateX(120%);
-    transition: transform 0.8s var(--ease-out-quint), opacity 0.5s;
+    transform: translateX(110%) scale(0.95);
+    transition: transform 0.8s var(--ease-elastic), opacity 0.5s ease;
     opacity: 0;
     display: flex;
     flex-direction: column;
 }
 .info-card.visible {
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
     opacity: 1;
 }
 
 .info-card-image {
     width: 100%;
-    height: 240px;
+    height: 300px;
     object-fit: cover;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    border-bottom: 1px solid var(--color-border);
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 }
-.info-card-content { padding: 0 2rem 2rem 2rem; margin-top: -1rem; position: relative; }
+.info-card-content { padding: 0 2.5rem 2.5rem 2.5rem; margin-top: -3rem; position: relative; }
 
-.info-card-header { margin-bottom: 1.5rem; }
+.info-card-header { margin-bottom: 2rem; }
 .info-card-title {
     font-family: var(--font-heading);
-    font-size: 2.2rem;
+    font-size: 2.8rem;
     line-height: 1.1;
     font-weight: 400;
-    color: var(--color-primary);
-    text-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-style: italic;
+    color: var(--color-text-strong);
+    text-shadow: 0 0 40px rgba(0,0,0,0.8);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
 }
 .info-card-subtitle-ta {
     font-family: var(--font-tamil);
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
-    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--color-primary);
+    opacity: 0.9;
 }
 
 .info-card-planet-info {
     display: inline-flex;
     align-items: center;
-    background: rgba(255,255,255,0.05);
-    padding: 0.6rem 1.2rem;
-    border-radius: 50px;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.8rem 1.4rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
-.planet-icon { font-size: 1.2rem; margin-right: 0.8rem; }
+.planet-icon { font-size: 1.4rem; margin-right: 0.8rem; }
 .planet-text {
     font-family: var(--font-body);
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--color-text-strong);
 }
 
 .info-card-description {
-    font-family: var(--font-body);
-    font-size: 1rem;
-    line-height: 1.8;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    line-height: 1.7;
     color: var(--color-text-primary);
-    font-weight: 300;
+    font-weight: 400;
+    border-left: 2px solid var(--color-primary);
+    padding-left: 1.5rem;
 }
 
 .info-card-close-btn {
@@ -584,9 +610,9 @@ html, body {
     .nav-panel {
         top: auto;
         bottom: 1.5rem;
-        left: 1rem;
-        right: 1rem;
-        width: auto;
+        left: 0;
+        right: 0;
+        width: 100%;
         height: auto;
         max-height: none;
         padding: 0;
@@ -601,6 +627,9 @@ html, body {
         box-shadow: none;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
+        /* Peek effect on right edge */
+        mask-image: linear-gradient(to right, black 85%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
     }
     .nav-panel::-webkit-scrollbar { display: none; } /* Hide scrollbar */
 
@@ -609,24 +638,26 @@ html, body {
     .temple-list {
         display: flex;
         flex-direction: row;
-        padding: 0 0.5rem;
+        padding: 0 1.5rem; /* Left padding for first item */
         gap: 1rem;
-        margin-bottom: 1rem; /* Space for scroll */
+        padding-right: 20vw; /* End padding for scroll */
+        margin-bottom: 0.5rem;
     }
 
     /* Mobile Card Style */
     .temple-item {
         display: block; /* Reset grid */
-        width: 140px;
-        height: 200px;
+        width: 150px;
+        height: 220px;
         padding: 0;
         margin: 0;
-        border-radius: 16px;
+        border-radius: 20px;
         background: var(--color-bg-panel-mobile);
         scroll-snap-align: center;
         flex-shrink: 0;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.15);
+        transition: transform 0.4s var(--ease-elastic);
     }
 
     .temple-item:hover { transform: none; } /* Disable desktop hover */
@@ -634,27 +665,29 @@ html, body {
     .temple-item.active {
         background: var(--color-bg-panel-mobile);
         border: 2px solid var(--color-primary);
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8);
+        z-index: 10;
     }
 
     /* Mobile Image Cover */
     .temple-card-bg {
         width: 100%;
         height: 100%;
-        border-radius: 16px;
+        border-radius: 18px; /* Slightly less than parent */
         border: none;
         position: absolute;
         top: 0; left: 0;
         z-index: 0;
+        box-shadow: none;
     }
     .temple-card-overlay {
         display: block;
         position: absolute;
-        bottom: 0; left: 0; width: 100%; height: 80%;
-        background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+        bottom: 0; left: 0; width: 100%; height: 90%;
+        background: linear-gradient(to top, rgba(1, 3, 13, 0.98) 10%, transparent 100%);
         z-index: 1;
-        border-radius: 0 0 16px 16px;
+        border-radius: 0 0 18px 18px;
     }
 
     /* Mobile Content Overlay */
@@ -667,7 +700,7 @@ html, body {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        padding: 1rem;
+        padding: 1.2rem;
         z-index: 2;
     }
 
@@ -675,22 +708,32 @@ html, body {
         position: absolute;
         top: 0.8rem;
         left: 0.8rem;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        font-weight: 800;
         background: rgba(0,0,0,0.6);
-        padding: 2px 8px;
-        border-radius: 12px;
+        padding: 4px 10px;
+        border-radius: 20px;
         margin: 0;
-        backdrop-filter: blur(4px);
-        color: var(--color-primary);
+        backdrop-filter: blur(8px);
+        color: var(--color-text-strong);
+        border: 1px solid rgba(255,255,255,0.1);
     }
-    .temple-item.active .temple-index { color: var(--color-primary); }
+    .temple-item.active .temple-index {
+        background: var(--color-primary);
+        color: #000;
+        border-color: var(--color-primary);
+    }
 
     .temple-info { display: flex; flex-direction: column; white-space: normal; }
     .temple-name-en {
-        font-size: 0.85rem;
+        font-family: var(--font-heading);
+        font-size: 1rem;
+        font-weight: 400;
+        font-style: italic;
         line-height: 1.2;
         margin-bottom: 4px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        color: var(--color-text-strong);
     }
     .temple-name-ta { display: none; } /* Hide Tamil on mobile card for space */
 
@@ -700,22 +743,38 @@ html, body {
     .info-card {
         width: 100%;
         max-width: 100%;
-        height: 85vh;
+        height: 90vh;
         top: auto;
         bottom: 0;
         left: 0;
         right: 0;
-        border-radius: 24px 24px 0 0;
+        border-radius: 32px 32px 0 0;
         border-bottom: none;
         transform: translateY(110%);
         z-index: 200;
         background: var(--color-bg-panel-mobile);
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    }
+    .info-card::before {
+        content: "";
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 2px;
+        z-index: 201;
     }
     .info-card.visible {
         transform: translateY(0);
     }
-    .info-card-image { height: 250px; }
-    .info-card-content { padding: 1.5rem; padding-bottom: 6rem; /* Safe area for bottom nav */ }
+    .info-card-image { height: 280px; }
+    .info-card-content { padding: 2rem 1.5rem; padding-bottom: 8rem; /* Safe area for bottom nav */ }
+
+    .info-card-title { font-size: 2.2rem; }
 
     /* Map Adjustments */
     .leaflet-control-zoom { display: none; }
