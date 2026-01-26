@@ -836,3 +836,24 @@ html, body {
     .intro-title { font-size: 2.2rem; margin: 0 1rem 1rem 1rem; }
     .intro-button { padding: 1rem 2rem; width: 80%; text-align: center; }
 }
+
+/* --- NoScript Overlay --- */
+.noscript-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #020617;
+    color: #e2e8f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: 'Manrope', sans-serif;
+    z-index: 10001;
+}
+.noscript-msg {
+    font-size: 1.2rem;
+    padding: 2rem;
+}
