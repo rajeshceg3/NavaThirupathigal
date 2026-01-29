@@ -116,10 +116,23 @@ document.addEventListener('DOMContentLoaded', function() {
             toast = document.createElement('div');
             toast.id = 'toast-notification';
             toast.className = 'toast-notification';
-            toast.innerHTML = `<span id="toast-message">${message}</span><button class="toast-close" aria-label="Close notification">×</button>`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+
+            const msgSpan = document.createElement('span');
+            msgSpan.id = 'toast-message';
+            msgSpan.textContent = message;
+
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'toast-close';
+            closeBtn.setAttribute('aria-label', 'Close notification');
+            closeBtn.textContent = '×';
+
+            toast.appendChild(msgSpan);
+            toast.appendChild(closeBtn);
             document.body.appendChild(toast);
 
-            toast.querySelector('.toast-close').addEventListener('click', () => {
+            closeBtn.addEventListener('click', () => {
                 toast.classList.remove('visible');
             });
         } else {
