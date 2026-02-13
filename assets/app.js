@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     infoCard.setAttribute('aria-label', 'Temple Details');
 
     const infoCardCloseBtn = document.getElementById('info-card-close-btn');
+    const startTourBtn = document.getElementById('start-tour-btn');
+    const tourControls = document.getElementById('tour-controls');
     // ... (rest of info card elements are queried inside render function for tidiness)
 
     // --- App State & Core Variables ---
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let activeTempleId = null; // SINGLE SOURCE OF TRUTH
     let lastFocusedElement = null;
     let tileLayer;
+    let isTourActive = false;
 
     // --- Core Functions ---
 
@@ -44,11 +47,94 @@ document.addEventListener('DOMContentLoaded', function() {
     function focusCloseBtn(e) {
         // Only act on the infoCard's transition
         if (e.target !== infoCard) return;
-        document.getElementById('info-card-close-btn').focus();
+
+        // In tour mode, focus the Next button instead of close button
+        if (isTourActive) {
+            const nextBtn = document.getElementById('tour-next-btn');
+            if (nextBtn) nextBtn.focus();
+        } else {
+            document.getElementById('info-card-close-btn').focus();
+        }
+    }
+
+    // --- Tour Logic ---
+    function startTour() {
+        if (isTourActive) return;
+        isTourActive = true;
+        document.body.classList.add('tour-active');
+        showToast("Guided Tour Started. Use arrow keys to navigate.");
+        setActiveTemple(0);
+    }
+
+    function endTour() {
+        isTourActive = false;
+        document.body.classList.remove('tour-active');
+        setActiveTemple(null);
+        showToast("Tour Ended.");
+    }
+
+    function navigateTour(direction) {
+        if (!isTourActive || activeTempleId === null) return;
+
+        const nextId = activeTempleId + direction;
+        if (nextId >= 0 && nextId < templeData.length) {
+            setActiveTemple(nextId);
+        }
+    }
+
+    function updateTourControls() {
+        if (!isTourActive || activeTempleId === null) {
+            tourControls.innerHTML = '';
+            return;
+        }
+
+        // Save current focus if it's inside tourControls
+        let focusedId = null;
+        if (document.activeElement && tourControls.contains(document.activeElement)) {
+            focusedId = document.activeElement.id;
+        }
+
+        const isFirst = activeTempleId === 0;
+        const isLast = activeTempleId === templeData.length - 1;
+
+        tourControls.innerHTML = `
+            <button class="tour-btn" id="tour-prev-btn" aria-label="Previous Stop" ${isFirst ? 'disabled' : ''}>
+                ← Prev
+            </button>
+            <span class="tour-progress">Stop ${activeTempleId + 1} of ${templeData.length}</span>
+            <button class="tour-btn primary" id="tour-next-btn" aria-label="${isLast ? 'Finish Tour' : 'Next Stop'}">
+                ${isLast ? 'Finish' : 'Next →'}
+            </button>
+            <button class="tour-btn" id="tour-exit-btn" aria-label="Exit Tour">
+                Exit
+            </button>
+        `;
+
+        const prevBtn = document.getElementById('tour-prev-btn');
+        const nextBtn = document.getElementById('tour-next-btn');
+        const exitBtn = document.getElementById('tour-exit-btn');
+
+        prevBtn.addEventListener('click', () => navigateTour(-1));
+        nextBtn.addEventListener('click', () => {
+            if (isLast) endTour();
+            else navigateTour(1);
+        });
+        exitBtn.addEventListener('click', endTour);
+
+        // Restore focus
+        if (focusedId) {
+            const el = document.getElementById(focusedId);
+            if (el && !el.disabled) {
+                el.focus();
+            }
+        }
     }
 
     // Declarative Render Function: Updates the entire UI based on the current state
     function render() {
+        // Handle Tour Controls
+        updateTourControls();
+
         // Update Nav List
         templeNavItems.forEach((item, index) => {
             const isActive = index === activeTempleId;
@@ -270,7 +356,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     infoCardCloseBtn.addEventListener('click', () => {
-        setActiveTemple(null);
+        if (isTourActive) {
+            endTour();
+        } else {
+            setActiveTemple(null);
+        }
+    });
+
+    startTourBtn.addEventListener('click', startTour);
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+        if (isTourActive) {
+            if (e.key === 'ArrowLeft') navigateTour(-1);
+            if (e.key === 'ArrowRight') {
+                if (activeTempleId === templeData.length - 1) endTour();
+                else navigateTour(1);
+            }
+            if (e.key === 'Escape') endTour();
+        }
     });
 
     infoCard.addEventListener('keydown', handleFocusTrap);
