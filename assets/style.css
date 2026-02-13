@@ -804,3 +804,106 @@ html, body {
     font-size: 1.2rem;
     padding: 2rem;
 }
+
+/* --- Tour Mode Styles --- */
+.start-tour-fab {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 500;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #000;
+    font-family: var(--font-body);
+    font-weight: 800;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 0 20px var(--color-primary-glow);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-quint);
+    animation: pulse-glow 3s infinite;
+}
+.start-tour-fab:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 0 30px var(--color-primary);
+    color: #fff;
+}
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px var(--color-primary-glow); }
+    50% { box-shadow: 0 0 40px var(--color-primary-glow); }
+}
+
+.tour-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    gap: 1rem;
+}
+.tour-controls:empty {
+    display: none;
+}
+
+.tour-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-strong);
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+.tour-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+}
+.tour-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    border-color: transparent;
+}
+.tour-btn.primary {
+    background: var(--color-primary);
+    color: #000;
+    font-weight: 800;
+    box-shadow: 0 0 15px var(--color-primary-glow);
+}
+.tour-btn.primary:hover {
+    background: #fff;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+}
+
+.tour-progress {
+    font-family: var(--font-heading);
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+}
+
+/* Tour Active State */
+.tour-active .nav-panel {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: grayscale(100%);
+    transition: all 0.5s ease;
+}
+.tour-active .info-card-close-btn {
+    display: none;
+}
+.tour-active .start-tour-fab {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .start-tour-fab {
+        bottom: 7rem; /* Above the carousel */
+    }
+}
