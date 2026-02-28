@@ -7,6 +7,7 @@
     --color-primary: #fbbf24; /* Amber 400 */
     --color-primary-dark: #d97706; /* Amber 600 */
     --color-primary-glow: rgba(251, 191, 36, 0.5);
+    --active-planet-color: var(--color-primary); /* Default to primary */
     --color-secondary: #6366f1; /* Indigo 500 */
     --color-secondary-glow: rgba(99, 102, 241, 0.5);
 
@@ -312,8 +313,8 @@ html, body {
 }
 .orb-marker.active .orb-core {
     transform: scale(1.6);
-    background: var(--color-primary);
-    box-shadow: 0 0 40px var(--color-primary), 0 0 80px var(--color-primary);
+    background: var(--active-planet-color);
+    box-shadow: 0 0 40px var(--active-planet-color), 0 0 80px var(--active-planet-color);
 }
 @keyframes pulse-ring {
     0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; border-width: 2px; }
@@ -345,10 +346,13 @@ html, body {
 
 /* --- Celestial River Path --- */
 .celestial-river {
-    stroke-dasharray: 10, 20;
-    stroke-dashoffset: 0;
-    animation: flow 3s linear infinite;
+    /* Set stroke-dasharray dynamically in JS to path total length, or a large enough number for the full path */
+    stroke-dashoffset: 3000; /* Start hidden */
+    animation: path-reveal 4s var(--ease-out-quint) forwards, flow 3s linear 4s infinite;
     filter: drop-shadow(0 0 8px var(--color-primary-glow));
+}
+@keyframes path-reveal {
+    to { stroke-dashoffset: 0; }
 }
 @keyframes flow {
     to { stroke-dashoffset: -30; }
@@ -437,8 +441,8 @@ html, body {
 }
 .temple-item.active {
     background: linear-gradient(90deg, rgba(251, 191, 36, 0.08) 0%, transparent 100%);
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.05);
+    border: 1px solid var(--active-planet-color);
+    box-shadow: 0 0 20px var(--active-planet-color);
 }
 
 /* Desktop Avatar/Thumbnail */
@@ -476,7 +480,7 @@ html, body {
     margin-right: 1rem;
     min-width: 25px;
 }
-.temple-item.active .temple-index { color: var(--color-primary); text-shadow: 0 0 10px var(--color-primary); }
+.temple-item.active .temple-index { color: var(--active-planet-color); text-shadow: 0 0 10px var(--active-planet-color); }
 
 .temple-info { display: flex; flex-direction: column; }
 .temple-name-en {
@@ -495,15 +499,25 @@ html, body {
 .active-indicator {
     width: 4px;
     height: 100%;
-    background: var(--color-primary);
+    background: var(--active-planet-color);
     border-radius: 2px;
     opacity: 0;
-    box-shadow: 0 0 10px var(--color-primary);
+    box-shadow: 0 0 10px var(--active-planet-color);
     transition: opacity 0.3s;
 }
 .temple-item.active .active-indicator { opacity: 1; }
 
 /* --- Info Card (Floating Glass) --- */
+@keyframes slideUpFade {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-1 { animation: slideUpFade 0.6s var(--ease-out-quint) 0.1s forwards; opacity: 0; }
+.stagger-2 { animation: slideUpFade 0.6s var(--ease-out-quint) 0.2s forwards; opacity: 0; }
+.stagger-3 { animation: slideUpFade 0.6s var(--ease-out-quint) 0.3s forwards; opacity: 0; }
+.stagger-4 { animation: slideUpFade 0.6s var(--ease-out-quint) 0.4s forwards; opacity: 0; }
+
 .info-card {
     position: absolute;
     top: 2rem;
@@ -528,6 +542,8 @@ html, body {
 .info-card.visible {
     transform: translateX(0) scale(1);
     opacity: 1;
+    border: 1px solid var(--active-planet-color);
+    box-shadow: inset 0 0 0 1px var(--glass-highlight), 0 0 30px var(--active-planet-color);
 }
 
 .info-card-image {
@@ -585,7 +601,7 @@ html, body {
     line-height: 1.7;
     color: var(--color-text-primary);
     font-weight: 400;
-    border-left: 2px solid var(--color-primary);
+    border-left: 2px solid var(--active-planet-color);
     padding-left: 1.5rem;
 }
 
@@ -681,7 +697,7 @@ html, body {
 
     .temple-item.active {
         background: var(--color-bg-panel-mobile);
-        border: 2px solid var(--color-primary);
+        border: 2px solid var(--active-planet-color);
         transform: scale(1.05) translateY(-5px);
         box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8);
         z-index: 10;
@@ -736,9 +752,9 @@ html, body {
         border: 1px solid rgba(255,255,255,0.1);
     }
     .temple-item.active .temple-index {
-        background: var(--color-primary);
+        background: var(--active-planet-color);
         color: #000;
-        border-color: var(--color-primary);
+        border-color: var(--active-planet-color);
     }
 
     .temple-info { display: flex; flex-direction: column; white-space: normal; }
