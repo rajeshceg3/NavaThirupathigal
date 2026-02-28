@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let lastFocusedElement = null;
     let tileLayer;
     let isTourActive = false;
+    let journeyPath;
 
     // --- Core Functions ---
 
@@ -193,6 +194,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide info card if no temple is selected
             infoCard.classList.remove('visible');
             infoCard.removeEventListener('transitionend', focusCloseBtn);
+
+            // Zoom map back out to constellation view
+            if (journeyPath && map) {
+                map.flyToBounds(journeyPath.getBounds(), { padding: [50, 50], animate: true, duration: 1.5 });
+            }
         }
     }
 
@@ -254,15 +260,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateNavAndMarkers() {
         const fragment = document.createDocumentFragment();
 
-        // Custom DivIcon for CSS-only styling (Slick & Performant)
-        const customIcon = L.divIcon({
-            className: 'orb-marker',
-            html: '<div class="orb-core"></div><div class="orb-ring"></div>',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20]
-        });
-
         templeData.forEach((temple, index) => {
+            // Custom DivIcon for CSS-only styling (Slick & Performant), staggered entry
+            const delay = index * 0.15; // match staggered list
+            const customIcon = L.divIcon({
+                className: 'orb-marker',
+                html: `<div class="orb-core" style="animation: marker-pop 0.6s var(--ease-elastic) ${delay}s forwards; opacity: 0; transform: scale(0);"></div><div class="orb-ring" style="animation-delay: ${delay + 0.6}s;"></div>`,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
             // Create Nav Item (Enhanced Structure for Cards/List)
             const button = document.createElement('button');
             button.className = 'temple-item';
@@ -335,6 +342,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         templeList.appendChild(fragment);
         templeNavItems = Array.from(templeList.children);
+
+        // Create Celestial River Path
+        const coords = templeData.map(t => t.coords);
+        journeyPath = L.polyline(coords, {
+            color: 'var(--color-primary)',
+            weight: 3,
+            opacity: 0.8,
+            dashArray: '10, 20',
+            className: 'celestial-river'
+        }).addTo(map);
     }
 
     // --- Event Listeners & Initialization ---
@@ -342,6 +359,12 @@ document.addEventListener('DOMContentLoaded', function() {
         introScreen.classList.add('hidden');
         introScreen.style.opacity = '0';
         appContainer.classList.add('visible');
+        // If returning user, fitbounds immediately without animation on load
+        setTimeout(() => {
+            if (journeyPath && map) {
+                map.fitBounds(journeyPath.getBounds(), { padding: [50, 50] });
+            }
+        }, 100);
     }
 
     introButton.addEventListener('click', () => {
@@ -352,6 +375,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         introScreen.addEventListener('transitionend', () => {
             introScreen.classList.add('hidden');
+            // When journey begins, flyToBounds to show constellation
+            if (journeyPath && map) {
+                map.flyToBounds(journeyPath.getBounds(), { padding: [50, 50], animate: true, duration: 2.0 });
+            }
         }, { once: true });
     });
 
