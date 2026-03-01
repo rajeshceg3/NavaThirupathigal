@@ -26,8 +26,43 @@ document.addEventListener('DOMContentLoaded', function() {
     let tileLayer;
     let isTourActive = false;
     let journeyPath;
+    let audioContext = null;
 
     // --- Core Functions ---
+
+    // --- Ethereal Audio Synthesizer ---
+    function playCelestialChime() {
+        if (!audioContext) {
+            // Initialize on first user interaction to comply with browser autoplay policies
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return; // Not supported
+            audioContext = new AudioContext();
+        }
+
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
+        const osc = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        // Subtle, ethereal tone
+        osc.type = 'sine';
+        // Base frequency 432Hz (often associated with calm/spiritual tones)
+        // Add a slight randomization for organic feel
+        osc.frequency.setValueAtTime(432 + (Math.random() * 20 - 10), audioContext.currentTime);
+
+        // Envelope: soft attack, long release
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1); // Attack
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3.0); // Release
+
+        osc.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        osc.start(audioContext.currentTime);
+        osc.stop(audioContext.currentTime + 3.0);
+    }
 
     // Centralized State Mutator: The only way to change the active temple
     function setActiveTemple(id) {
@@ -35,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (id !== null) {
             lastFocusedElement = document.activeElement;
+            playCelestialChime(); // Play subtle sound when selecting a temple
         }
 
         activeTempleId = id;
@@ -155,6 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (activeTempleId !== null) {
             const temple = templeData[activeTempleId];
 
+            // Set dynamic planet color
+            document.documentElement.style.setProperty('--active-planet-color', temple.color);
+
             // Update and show info card
             const imgEl = document.getElementById('info-card-image');
             imgEl.style.display = 'block';
@@ -175,6 +214,23 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('planet-text').textContent = temple.planet;
             document.getElementById('info-card-description').textContent = temple.description;
 
+            // Re-apply stagger animations
+            const elementsToAnimate = [
+                document.getElementById('info-card-title').parentElement,
+                document.querySelector('.info-card-planet-info'),
+                document.getElementById('info-card-description'),
+                document.getElementById('tour-controls')
+            ];
+
+            elementsToAnimate.forEach((el, i) => {
+                if (el) {
+                    el.classList.remove(`stagger-${i + 1}`);
+                    // Force reflow
+                    void el.offsetWidth;
+                    el.classList.add(`stagger-${i + 1}`);
+                }
+            });
+
             // Focus management
             const isAlreadyVisible = infoCard.classList.contains('visible');
             infoCard.classList.add('visible');
@@ -191,6 +247,8 @@ document.addEventListener('DOMContentLoaded', function() {
             map.flyTo(temple.coords, 15, { animate: true, duration: 1.5 });
 
         } else {
+            // Revert dynamic planet color
+            document.documentElement.style.setProperty('--active-planet-color', 'var(--color-primary)');
             // Hide info card if no temple is selected
             infoCard.classList.remove('visible');
             infoCard.removeEventListener('transitionend', focusCloseBtn);
@@ -349,8 +407,8 @@ document.addEventListener('DOMContentLoaded', function() {
             color: 'var(--color-primary)',
             weight: 3,
             opacity: 0.8,
-            dashArray: '10, 20',
-            className: 'celestial-river'
+            className: 'celestial-river',
+            dashArray: '3000, 3000'
         }).addTo(map);
     }
 
@@ -427,6 +485,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+    // --- Mouse Parallax Effect ---
+    document.addEventListener('mousemove', (e) => {
+        // Only apply on desktop
+        if (window.innerWidth <= 768) return;
+
+        const x = (e.clientX / window.innerWidth - 0.5) * 2; // Range -1 to 1
+        const y = (e.clientY / window.innerHeight - 0.5) * 2; // Range -1 to 1
+
+        const stars1 = document.querySelector('.stars');
+        const stars2 = document.querySelector('.stars2');
+        const navPanel = document.querySelector('.nav-panel');
+
+        if (stars1) stars1.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+        if (stars2) stars2.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+        if (navPanel) navPanel.style.transform = `translate(${x * -5}px, ${y * -5}px)`;
+
+        // Also subtly move info card if visible
+        if (infoCard.classList.contains('visible')) {
+            // we maintain the slide-in transform by adding to it
+            infoCard.style.transform = `translate(calc(0px + ${x * -10}px), ${y * -10}px) scale(1)`;
+        }
+    });
 
     // --- Initializer ---
     initMap();
