@@ -27,10 +27,43 @@ document.addEventListener('DOMContentLoaded', function() {
     let isTourActive = false;
     let journeyPath;
     let audioContext = null;
+    let autoPlayInterval = null;
 
     // --- Core Functions ---
 
     // --- Ethereal Audio Synthesizer ---
+    function startAmbientAudio() {
+        if (!audioContext) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            audioContext = new AudioContext();
+        }
+
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
+        // Base drone
+        const osc1 = audioContext.createOscillator();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(108, audioContext.currentTime); // Deep hum
+
+        const osc2 = audioContext.createOscillator();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(110, audioContext.currentTime); // Slight detune for beating effect
+
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 5); // Slow fade in
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        osc1.start();
+        osc2.start();
+    }
+
     function playCelestialChime() {
         if (!audioContext) {
             // Initialize on first user interaction to comply with browser autoplay policies
@@ -138,7 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="tour-btn" id="tour-prev-btn" aria-label="Previous Stop" ${isFirst ? 'disabled' : ''}>
                 ← Prev
             </button>
-            <span class="tour-progress">Stop ${activeTempleId + 1} of ${templeData.length}</span>
+            <div class="tour-progress-container">
+                <span class="tour-progress">Stop ${activeTempleId + 1} of ${templeData.length}</span>
+                <button class="tour-btn" id="tour-autoplay-btn" aria-label="${autoPlayInterval ? 'Stop Auto-Play' : 'Start Auto-Play'}">
+                    ${autoPlayInterval ? '⏸️ Auto' : '▶️ Auto'}
+                </button>
+            </div>
             <button class="tour-btn primary" id="tour-next-btn" aria-label="${isLast ? 'Finish Tour' : 'Next Stop'}">
                 ${isLast ? 'Finish' : 'Next →'}
             </button>
@@ -150,13 +188,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const prevBtn = document.getElementById('tour-prev-btn');
         const nextBtn = document.getElementById('tour-next-btn');
         const exitBtn = document.getElementById('tour-exit-btn');
+        const autoPlayBtn = document.getElementById('tour-autoplay-btn');
 
-        prevBtn.addEventListener('click', () => navigateTour(-1));
+        prevBtn.addEventListener('click', () => {
+            if (autoPlayInterval) toggleAutoPlay();
+            navigateTour(-1);
+        });
         nextBtn.addEventListener('click', () => {
+            if (autoPlayInterval) toggleAutoPlay();
             if (isLast) endTour();
             else navigateTour(1);
         });
         exitBtn.addEventListener('click', endTour);
+
+        autoPlayBtn.addEventListener('click', toggleAutoPlay);
 
         // Restore focus
         if (focusedId) {
@@ -165,6 +210,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 el.focus();
             }
         }
+    }
+
+    function toggleAutoPlay() {
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = null;
+            showToast("Auto-Play paused.");
+        } else {
+            if (activeTempleId === templeData.length - 1) {
+                // If at the end, jump back to the start before beginning autoplay
+                setActiveTemple(0);
+            }
+
+            autoPlayInterval = setInterval(() => {
+                if (!isTourActive || activeTempleId === null) {
+                    toggleAutoPlay();
+                    return;
+                }
+
+                if (activeTempleId === templeData.length - 1) {
+                    toggleAutoPlay(); // Stop at the end
+                } else {
+                    navigateTour(1);
+                }
+            }, 8000);
+            showToast("Auto-Play started.");
+        }
+        updateTourControls(); // Re-render to update the button icon
     }
 
     // Declarative Render Function: Updates the entire UI based on the current state
@@ -383,6 +456,27 @@ document.addEventListener('DOMContentLoaded', function() {
             button.append(cardBg, content, indicator);
             // --- End Secure DOM Creation ---
 
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within the element
+                const y = e.clientY - rect.top;  // y position within the element
+
+                // Calculate tilt based on cursor position relative to center
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const tiltX = ((x - centerX) / centerX) * 5; // max 5 deg tilt
+                const tiltY = -((y - centerY) / centerY) * 5; // max 5 deg tilt
+
+                button.style.setProperty('--tilt-x', tiltX);
+                button.style.setProperty('--tilt-y', tiltY);
+            });
+
+            button.addEventListener('mouseleave', () => {
+                button.style.setProperty('--tilt-x', 0);
+                button.style.setProperty('--tilt-y', 0);
+            });
+
             button.addEventListener('click', () => setActiveTemple(temple.id));
             fragment.appendChild(button);
 
@@ -417,6 +511,14 @@ document.addEventListener('DOMContentLoaded', function() {
         introScreen.classList.add('hidden');
         introScreen.style.opacity = '0';
         appContainer.classList.add('visible');
+
+        // Start ambient audio for returning user after a short delay (must interact first generally, but we can try)
+        // Usually requires interaction, so might not play until they click somewhere, but we set it up.
+        document.addEventListener('click', () => {
+             if(audioContext && audioContext.state === 'running') return;
+             startAmbientAudio();
+        }, { once: true });
+
         // If returning user, fitbounds immediately without animation on load
         setTimeout(() => {
             if (journeyPath && map) {
@@ -430,6 +532,7 @@ document.addEventListener('DOMContentLoaded', function() {
         introScreen.style.opacity = '0';
         appContainer.classList.add('visible');
         map.invalidateSize();
+        startAmbientAudio(); // Start ambient drone on initial interaction
 
         introScreen.addEventListener('transitionend', () => {
             introScreen.classList.add('hidden');
@@ -485,6 +588,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+    // --- Dynamic Shooting Stars ---
+    function spawnShootingStar() {
+        const star = document.createElement('div');
+        star.classList.add('shooting-star');
+
+        // Random start position
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * (window.innerHeight / 2); // Start mostly in top half
+
+        star.style.left = `${startX}px`;
+        star.style.top = `${startY}px`;
+
+        const background = document.querySelector('.background-pattern');
+        if (background) {
+            background.appendChild(star);
+
+            // Remove after animation completes (2s + buffer)
+            setTimeout(() => {
+                if (background.contains(star)) {
+                    background.removeChild(star);
+                }
+            }, 2500);
+        }
+    }
+
+    // Spawn a star roughly every 3 seconds (add some randomness to avoid predictable intervals)
+    setInterval(() => {
+        if (Math.random() > 0.3) { // 70% chance to spawn
+            spawnShootingStar();
+        }
+    }, 3000);
 
     // --- Mouse Parallax Effect ---
     document.addEventListener('mousemove', (e) => {
