@@ -116,7 +116,7 @@ html, body {
     height: 1px;
     background: transparent;
     box-shadow: 154px 346px #FFF , 643px 880px #FFF , 1802px 512px #FFF , 424px 1256px #FFF , 1276px 1475px #FFF , 856px 426px #FFF , 1532px 112px #FFF , 943px 1863px #FFF , 261px 852px #FFF , 1134px 621px #FFF , 1654px 1432px #FFF , 532px 1745px #FFF , 143px 1324px #FFF , 1892px 234px #FFF , 743px 1563px #FFF , 1324px 956px #FFF;
-    animation: animStar 50s linear infinite;
+    animation: animStar 50s linear infinite, twinkle 4s ease-in-out infinite alternate;
 }
 
 .stars2::after {
@@ -127,12 +127,40 @@ html, body {
     height: 2px;
     background: transparent;
     box-shadow: 254px 446px #FFF , 743px 980px #FFF , 1902px 612px #FFF , 524px 1356px #FFF , 1376px 1575px #FFF , 956px 526px #FFF , 1632px 212px #FFF , 1043px 1963px #FFF;
-    animation: animStar 100s linear infinite;
+    animation: animStar 100s linear infinite, twinkle 6s ease-in-out infinite alternate-reverse;
 }
 
 @keyframes animStar {
     from { transform: translateY(0px); }
     to { transform: translateY(-2000px); }
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* --- Interactive Stardust Cursor Trail --- */
+.stardust {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 0 10px var(--color-primary), 0 0 20px #fff;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    animation: stardust-fade 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes stardust-fade {
+    to {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
 }
 
 /* --- Intro Screen --- */
