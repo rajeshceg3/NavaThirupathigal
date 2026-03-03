@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let journeyPath;
     let audioContext = null;
     let autoPlayInterval = null;
+    let droneOsc1 = null;
+    let droneOsc2 = null;
 
     // --- Core Functions ---
 
@@ -44,27 +46,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Base drone
-        const osc1 = audioContext.createOscillator();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(108, audioContext.currentTime); // Deep hum
+        if (!droneOsc1) {
+            droneOsc1 = audioContext.createOscillator();
+            droneOsc1.type = 'sine';
+            droneOsc1.frequency.setValueAtTime(108, audioContext.currentTime); // Deep hum
 
-        const osc2 = audioContext.createOscillator();
-        osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(110, audioContext.currentTime); // Slight detune for beating effect
+            droneOsc2 = audioContext.createOscillator();
+            droneOsc2.type = 'triangle';
+            droneOsc2.frequency.setValueAtTime(110, audioContext.currentTime); // Slight detune for beating effect
 
-        const gainNode = audioContext.createGain();
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 5); // Slow fade in
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 5); // Slow fade in
 
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+            droneOsc1.connect(gainNode);
+            droneOsc2.connect(gainNode);
+            gainNode.connect(audioContext.destination);
 
-        osc1.start();
-        osc2.start();
+            droneOsc1.start();
+            droneOsc2.start();
+        }
     }
 
-    function playCelestialChime() {
+    function playCelestialChime(id) {
         if (!audioContext) {
             // Initialize on first user interaction to comply with browser autoplay policies
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -77,24 +81,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const osc = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
+
+        // Pentatonic Scale: C4, D4, E4, G4, A4
+        const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00];
+        const baseFreq = (id !== undefined && id !== null) ? pentatonic[id % 5] : 432;
+        const freq = baseFreq + (Math.random() * 4 - 2);
 
         // Subtle, ethereal tone
         osc.type = 'sine';
-        // Base frequency 432Hz (often associated with calm/spiritual tones)
-        // Add a slight randomization for organic feel
-        osc.frequency.setValueAtTime(432 + (Math.random() * 20 - 10), audioContext.currentTime);
+        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+
+        // A fifth up or an octave for richness
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(freq * 1.5, audioContext.currentTime);
 
         // Envelope: soft attack, long release
         gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1); // Attack
+        gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.1); // Attack
         gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3.0); // Release
 
         osc.connect(gainNode);
+        osc2.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
         osc.start(audioContext.currentTime);
+        osc2.start(audioContext.currentTime);
         osc.stop(audioContext.currentTime + 3.0);
+        osc2.stop(audioContext.currentTime + 3.0);
     }
 
     // Centralized State Mutator: The only way to change the active temple
@@ -103,10 +118,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (id !== null) {
             lastFocusedElement = document.activeElement;
-            playCelestialChime(); // Play subtle sound when selecting a temple
+            playCelestialChime(id); // Play subtle sound when selecting a temple
         }
 
         activeTempleId = id;
+
+        // Modulate background drone based on active temple
+        if (audioContext && droneOsc1 && droneOsc2) {
+            if (activeTempleId !== null) {
+                droneOsc1.frequency.setTargetAtTime(108 + (activeTempleId * 2), audioContext.currentTime, 1);
+                droneOsc2.frequency.setTargetAtTime(110 + (activeTempleId * 2), audioContext.currentTime, 1);
+            } else {
+                // Reset
+                droneOsc1.frequency.setTargetAtTime(108, audioContext.currentTime, 1);
+                droneOsc2.frequency.setTargetAtTime(110, audioContext.currentTime, 1);
+            }
+        }
         render();
 
         if (activeTempleId === null && lastFocusedElement) {
@@ -266,15 +293,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Set dynamic planet color
             document.documentElement.style.setProperty('--active-planet-color', temple.color);
+            // Shift map hue slightly based on the temple for varied atmosphere
+            document.documentElement.style.setProperty('--map-hue', `${200 + activeTempleId * 15}deg`);
 
             // Update and show info card
             const imgEl = document.getElementById('info-card-image');
             imgEl.style.display = 'block';
             imgEl.style.opacity = '0';
+            imgEl.style.transform = 'scale(1)';
             imgEl.style.transition = 'opacity 0.6s ease';
 
             imgEl.onload = function() {
                 this.style.opacity = '1';
+                this.style.transition = 'opacity 0.6s ease, transform 20s ease-out';
+                this.style.transform = 'scale(1.05)';
             };
 
             imgEl.src = temple.image;
@@ -322,6 +354,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Revert dynamic planet color
             document.documentElement.style.setProperty('--active-planet-color', 'var(--color-primary)');
+            document.documentElement.style.setProperty('--map-hue', '200deg');
+
             // Hide info card if no temple is selected
             infoCard.classList.remove('visible');
             infoCard.removeEventListener('transitionend', focusCloseBtn);
@@ -381,6 +415,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 showToast("Offline Mode: Map tiles unavailable");
                 toastShown = true;
             }
+        });
+
+        map.on('movestart', function() {
+            document.body.classList.add('is-traveling');
+        });
+        map.on('moveend', function() {
+            document.body.classList.remove('is-traveling');
         });
 
         tileLayer.addTo(map);
