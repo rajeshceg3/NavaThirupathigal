@@ -102,9 +102,24 @@ document.addEventListener('DOMContentLoaded', function() {
         gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.1); // Attack
         gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3.0); // Release
 
+        // 3D Spatial Audio Panning
+        let panner = null;
+        if (id !== undefined && id !== null && audioContext.createStereoPanner) {
+            panner = audioContext.createStereoPanner();
+            // Map ID 0-8 to roughly -1 (left) to 1 (right)
+            const panValue = (id / 4) - 1;
+            panner.pan.value = panValue;
+        }
+
         osc.connect(gainNode);
         osc2.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+
+        if (panner) {
+            gainNode.connect(panner);
+            panner.connect(audioContext.destination);
+        } else {
+            gainNode.connect(audioContext.destination);
+        }
 
         osc.start(audioContext.currentTime);
         osc2.start(audioContext.currentTime);
@@ -122,6 +137,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         activeTempleId = id;
+
+        // Subdued Text-to-Speech Narration
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Stop any ongoing speech
+
+            if (activeTempleId !== null) {
+                const temple = templeData[activeTempleId];
+                if (temple && temple.description) {
+                    const utterance = new SpeechSynthesisUtterance(temple.description);
+                    utterance.pitch = 0.8; // Lower, more relaxing pitch
+                    utterance.rate = 0.9;  // Slightly slower rate
+                    utterance.volume = 0.4; // Low volume so it doesn't overpower the ambiance
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        }
 
         // Modulate background drone based on active temple
         if (audioContext && droneOsc1 && droneOsc2) {
@@ -663,6 +694,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
 
     // --- Mouse Parallax Effect ---
+    let lastStardustTime = 0;
+
     document.addEventListener('mousemove', (e) => {
         // Only apply on desktop
         if (window.innerWidth <= 768) return;
@@ -682,6 +715,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if (infoCard.classList.contains('visible')) {
             // we maintain the slide-in transform by adding to it
             infoCard.style.transform = `translate(calc(0px + ${x * -10}px), ${y * -10}px) scale(1)`;
+        }
+
+        // Stardust cursor trail
+        const now = Date.now();
+        if (now - lastStardustTime > 50) { // Throttle trail generation
+            lastStardustTime = now;
+            const stardust = document.createElement('div');
+            stardust.className = 'stardust';
+            stardust.style.left = `${e.clientX}px`;
+            stardust.style.top = `${e.clientY}px`;
+
+            // Randomize size slightly for a more organic feel
+            const size = Math.random() * 2 + 2;
+            stardust.style.width = `${size}px`;
+            stardust.style.height = `${size}px`;
+
+            document.body.appendChild(stardust);
+
+            setTimeout(() => {
+                if (document.body.contains(stardust)) {
+                    document.body.removeChild(stardust);
+                }
+            }, 1000); // Remove after animation
         }
     });
 
