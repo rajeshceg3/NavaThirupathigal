@@ -31,6 +31,8 @@
     --shadow-glow: 0 0 40px rgba(251, 191, 36, 0.15);
 
     --map-hue: 200deg; /* Default midnight cosmos */
+    --mouse-x: 0;
+    --mouse-y: 0;
 }
 
 /* --- Base & Typography --- */
@@ -106,6 +108,14 @@ html, body {
     z-index: -1;
     pointer-events: none;
     will-change: transform;
+}
+
+.stars {
+    transform: translate(calc(var(--mouse-x) * 10px), calc(var(--mouse-y) * 10px));
+}
+
+.stars2 {
+    transform: translate(calc(var(--mouse-x) * 20px), calc(var(--mouse-y) * 20px));
 }
 
 .stars::after {
@@ -384,6 +394,15 @@ html, body {
     100% { transform: translate(-50%, -50%) scale(3); opacity: 0; border-width: 0px; }
 }
 
+.ring-2 {
+    animation: rotate-ring 10s linear infinite;
+}
+
+@keyframes rotate-ring {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 @keyframes marker-pop {
     0% { transform: scale(0); opacity: 0; }
     50% { transform: scale(1.5); opacity: 1; }
@@ -413,6 +432,14 @@ html, body {
     animation: path-reveal 4s var(--ease-out-quint) forwards, flow 3s linear 4s infinite;
     filter: drop-shadow(0 0 15px var(--color-primary-glow)) drop-shadow(0 0 30px var(--color-primary));
 }
+.energy-pulse {
+    stroke-dashoffset: 0;
+    animation: flow-energy 2s linear infinite;
+    filter: drop-shadow(0 0 15px var(--color-primary-glow)) drop-shadow(0 0 30px var(--color-primary));
+}
+@keyframes flow-energy {
+    to { stroke-dashoffset: -100; }
+}
 @keyframes path-reveal {
     to { stroke-dashoffset: 0; }
 }
@@ -439,6 +466,7 @@ html, body {
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
     transition: transform 0.4s var(--ease-out-quint), opacity 0.5s ease, filter 0.5s ease;
+    transform: translate(calc(var(--mouse-x) * -5px), calc(var(--mouse-y) * -5px));
 }
 .nav-panel::-webkit-scrollbar { width: 4px; }
 
@@ -619,7 +647,7 @@ body.is-traveling .info-card.visible {
 }
 
 .info-card.visible {
-    transform: translateX(0) scale(1);
+    transform: translateX(calc(var(--mouse-x) * -10px)) translateY(calc(var(--mouse-y) * -10px)) scale(1) perspective(1000px) rotateX(calc(var(--mouse-y) * 2deg)) rotateY(calc(var(--mouse-x) * 2deg));
     opacity: 1;
     border: 1px solid var(--active-planet-color);
     box-shadow: inset 0 0 0 1px var(--glass-highlight), 0 0 30px var(--active-planet-color);
@@ -663,7 +691,14 @@ body.is-traveling .info-card.visible {
     margin-bottom: 2rem;
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: planet-pulse 3s infinite alternate;
 }
+
+@keyframes planet-pulse {
+    0% { box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 0 10px rgba(255,255,255,0.05); }
+    100% { box-shadow: 0 4px 30px var(--color-primary-glow), inset 0 0 20px rgba(255,255,255,0.1); }
+}
+
 .planet-icon { font-size: 1.4rem; margin-right: 0.8rem; }
 .planet-text {
     font-family: var(--font-body);
@@ -682,6 +717,24 @@ body.is-traveling .info-card.visible {
     font-weight: 400;
     border-left: 2px solid var(--active-planet-color);
     padding-left: 1.5rem;
+}
+
+.reveal-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: text-reveal 0.4s ease forwards calc(var(--word-index) * 0.05s + 0.5s);
+}
+
+@keyframes text-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .info-card-close-btn {
