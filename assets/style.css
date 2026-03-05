@@ -71,6 +71,8 @@ html, body {
     position: absolute;
     width: 2px;
     height: 2px;
+    left: var(--star-x, 0);
+    top: var(--star-y, 0);
     background: white;
     border-radius: 50%;
     box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1),
@@ -118,6 +120,10 @@ html, body {
     transform: translate(calc(var(--mouse-x) * 20px), calc(var(--mouse-y) * 20px));
 }
 
+.stars3 {
+    transform: translate(calc(var(--mouse-x) * 30px), calc(var(--mouse-y) * 30px));
+}
+
 .stars::after {
     content: " ";
     position: absolute;
@@ -140,6 +146,36 @@ html, body {
     animation: animStar 100s linear infinite, twinkle 6s ease-in-out infinite alternate-reverse;
 }
 
+.stars3::after {
+    content: " ";
+    position: absolute;
+    top: 2000px;
+    width: 3px;
+    height: 3px;
+    background: transparent;
+    box-shadow: 124px 246px rgba(255,255,255,0.8) , 843px 780px rgba(255,255,255,0.8) , 1602px 412px rgba(255,255,255,0.8) , 324px 1556px rgba(255,255,255,0.8) , 1176px 1275px rgba(255,255,255,0.8);
+    animation: animStar 150s linear infinite, twinkle 8s ease-in-out infinite alternate;
+}
+
+body.hyperspace .stars::after {
+    animation: animStar 5s linear infinite;
+    width: 2px;
+    height: 40px;
+    box-shadow: 154px 346px #FFF , 643px 880px #FFF , 1802px 512px #FFF , 424px 1256px #FFF , 1276px 1475px #FFF , 856px 426px #FFF , 1532px 112px #FFF , 943px 1863px #FFF , 261px 852px #FFF , 1134px 621px #FFF , 1654px 1432px #FFF , 532px 1745px #FFF , 143px 1324px #FFF , 1892px 234px #FFF , 743px 1563px #FFF , 1324px 956px #FFF;
+}
+body.hyperspace .stars2::after {
+    animation: animStar 10s linear infinite;
+    width: 3px;
+    height: 60px;
+    box-shadow: 254px 446px #FFF , 743px 980px #FFF , 1902px 612px #FFF , 524px 1356px #FFF , 1376px 1575px #FFF , 956px 526px #FFF , 1632px 212px #FFF , 1043px 1963px #FFF;
+}
+body.hyperspace .stars3::after {
+    animation: animStar 15s linear infinite;
+    width: 4px;
+    height: 80px;
+    box-shadow: 124px 246px rgba(255,255,255,0.8) , 843px 780px rgba(255,255,255,0.8) , 1602px 412px rgba(255,255,255,0.8) , 324px 1556px rgba(255,255,255,0.8) , 1176px 1275px rgba(255,255,255,0.8);
+}
+
 @keyframes animStar {
     from { transform: translateY(0px); }
     to { transform: translateY(-2000px); }
@@ -153,8 +189,10 @@ html, body {
 /* --- Interactive Stardust Cursor Trail --- */
 .stardust {
     position: fixed;
-    width: 4px;
-    height: 4px;
+    width: var(--stardust-size, 4px);
+    height: var(--stardust-size, 4px);
+    left: var(--stardust-x, 0);
+    top: var(--stardust-y, 0);
     background: var(--color-primary);
     border-radius: 50%;
     pointer-events: none;
@@ -163,7 +201,7 @@ html, body {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0.8;
     animation: stardust-fade 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    will-change: transform, opacity;
+    will-change: transform, opacity, left, top;
 }
 
 @keyframes stardust-fade {
@@ -531,6 +569,10 @@ body.is-traveling .nav-panel {
     overflow: hidden;
     will-change: transform, background-color;
     transform: perspective(1000px) rotateX(calc(var(--tilt-y, 0) * 1deg)) rotateY(calc(var(--tilt-x, 0) * 1deg)) scale(1);
+
+    /* Staggered entry animation via JS custom prop */
+    opacity: 0;
+    animation: list-enter 0.6s var(--ease-out-quint) var(--enter-delay, 0s) forwards;
 }
 .temple-item:hover {
     background: rgba(255, 255, 255, 0.03);
@@ -562,6 +604,9 @@ body.is-traveling .nav-panel {
     object-fit: cover;
     opacity: 0.8;
     transition: opacity 0.3s ease, transform 0.5s ease;
+}
+.temple-card-bg img.error {
+    display: none;
 }
 .temple-item:hover .temple-card-bg img { opacity: 1; transform: scale(1.1); }
 .temple-item.active .temple-card-bg img { opacity: 1; }
@@ -660,6 +705,23 @@ body.is-traveling .info-card.visible {
     border-bottom: 1px solid var(--color-border);
     mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    display: block;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity 0.6s ease;
+}
+.info-card-image.loading {
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity 0.6s ease;
+}
+.info-card-image.loaded {
+    opacity: 1;
+    transform: scale(1.05);
+    transition: opacity 0.6s ease, transform 20s ease-out;
+}
+.info-card-image.error {
+    display: none;
 }
 .info-card-content { padding: 0 2.5rem 2.5rem 2.5rem; margin-top: -3rem; position: relative; }
 

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let autoPlayInterval = null;
     let droneOsc1 = null;
     let droneOsc2 = null;
+    let ambientFilter = null;
 
     // --- Core Functions ---
 
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             audioContext.resume();
         }
 
-        // Base drone
+        // Base drone with biquad filter for "breathing" effect
         if (!droneOsc1) {
             droneOsc1 = audioContext.createOscillator();
             droneOsc1.type = 'sine';
@@ -55,16 +56,29 @@ document.addEventListener('DOMContentLoaded', function() {
             droneOsc2.type = 'triangle';
             droneOsc2.frequency.setValueAtTime(110, audioContext.currentTime); // Slight detune for beating effect
 
+            ambientFilter = audioContext.createBiquadFilter();
+            ambientFilter.type = 'lowpass';
+            ambientFilter.frequency.setValueAtTime(400, audioContext.currentTime); // Muffled initial tone
+
             const gainNode = audioContext.createGain();
             gainNode.gain.setValueAtTime(0, audioContext.currentTime);
             gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 5); // Slow fade in
 
-            droneOsc1.connect(gainNode);
-            droneOsc2.connect(gainNode);
+            droneOsc1.connect(ambientFilter);
+            droneOsc2.connect(ambientFilter);
+            ambientFilter.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
             droneOsc1.start();
             droneOsc2.start();
+
+            // Setup continuous "breathing" filter sweep
+            setInterval(() => {
+                if (audioContext.state === 'running' && ambientFilter) {
+                    const nextFreq = 300 + Math.random() * 500;
+                    ambientFilter.frequency.setTargetAtTime(nextFreq, audioContext.currentTime, 4.0); // Slow, 4-second transitions
+                }
+            }, 8000);
         }
     }
 
@@ -155,14 +169,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Modulate background drone based on active temple
-        if (audioContext && droneOsc1 && droneOsc2) {
+        if (audioContext && droneOsc1 && droneOsc2 && ambientFilter) {
             if (activeTempleId !== null) {
                 droneOsc1.frequency.setTargetAtTime(108 + (activeTempleId * 2), audioContext.currentTime, 1);
                 droneOsc2.frequency.setTargetAtTime(110 + (activeTempleId * 2), audioContext.currentTime, 1);
+                // Temporarily open the filter for a more distinct tonal shift during transition
+                ambientFilter.frequency.setTargetAtTime(1200, audioContext.currentTime, 0.5);
+                ambientFilter.frequency.setTargetAtTime(600, audioContext.currentTime + 1.5, 2.0); // Settle back down
             } else {
                 // Reset
                 droneOsc1.frequency.setTargetAtTime(108, audioContext.currentTime, 1);
                 droneOsc2.frequency.setTargetAtTime(110, audioContext.currentTime, 1);
+                ambientFilter.frequency.setTargetAtTime(400, audioContext.currentTime, 2.0);
             }
         }
         render();
@@ -329,20 +347,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Update and show info card
             const imgEl = document.getElementById('info-card-image');
-            imgEl.style.display = 'block';
-            imgEl.style.opacity = '0';
-            imgEl.style.transform = 'scale(1)';
-            imgEl.style.transition = 'opacity 0.6s ease';
+
+            // Manage styles via CSS classes rather than inline style assignments for CSP compliance
+            imgEl.classList.remove('loaded', 'error');
+            imgEl.classList.add('loading');
 
             imgEl.onload = function() {
-                this.style.opacity = '1';
-                this.style.transition = 'opacity 0.6s ease, transform 20s ease-out';
-                this.style.transform = 'scale(1.05)';
+                imgEl.classList.remove('loading');
+                imgEl.classList.add('loaded');
             };
 
             imgEl.src = temple.image;
             imgEl.alt = `Architectural view of ${temple.name}`;
-            imgEl.onerror = function() { this.style.display = 'none'; };
+            imgEl.onerror = function() {
+                imgEl.classList.remove('loading', 'loaded');
+                imgEl.classList.add('error');
+            };
 
             document.getElementById('info-card-title').textContent = temple.name;
             document.getElementById('info-card-subtitle-ta').textContent = temple.tamilName;
@@ -494,9 +514,8 @@ document.addEventListener('DOMContentLoaded', function() {
             button.setAttribute('aria-label', `Select ${temple.name}`);
             button.setAttribute('aria-controls', 'info-card');
 
-            // Staggered Entry Animation
-            button.style.opacity = '0';
-            button.style.animation = `list-enter 0.6s var(--ease-out-quint) ${index * 0.08 + 0.2}s forwards`;
+            // Staggered Entry Animation via Custom Properties
+            button.style.setProperty('--enter-delay', `${index * 0.08 + 0.2}s`);
 
             // --- Secure DOM Creation (prevents XSS) ---
             const cardBg = document.createElement('div');
@@ -506,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
             img.src = temple.image;
             img.alt = `Image of ${temple.name}`;
             img.loading = 'lazy';
-            img.onerror = function() { this.style.display = 'none'; };
+            img.onerror = function() { this.classList.add('error'); };
             cardBg.appendChild(img);
 
             const overlay = document.createElement('div');
@@ -626,11 +645,17 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionStorage.setItem('introSeen', 'true');
         introScreen.style.opacity = '0';
         appContainer.classList.add('visible');
+        document.body.classList.add('hyperspace'); // Trigger hyperspace effect
         map.invalidateSize();
         startAmbientAudio(); // Start ambient drone on initial interaction
 
         introScreen.addEventListener('transitionend', () => {
             introScreen.classList.add('hidden');
+            // Remove hyperspace effect after a short delay
+            setTimeout(() => {
+                document.body.classList.remove('hyperspace');
+            }, 1500);
+
             // When journey begins, flyToBounds to show constellation
             if (journeyPath && map) {
                 map.flyToBounds(journeyPath.getBounds(), { padding: [50, 50], animate: true, duration: 2.0 });
@@ -693,8 +718,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const startX = Math.random() * window.innerWidth;
         const startY = Math.random() * (window.innerHeight / 2); // Start mostly in top half
 
-        star.style.left = `${startX}px`;
-        star.style.top = `${startY}px`;
+        star.style.setProperty('--star-x', `${startX}px`);
+        star.style.setProperty('--star-y', `${startY}px`);
 
         const background = document.querySelector('.background-pattern');
         if (background) {
@@ -716,42 +741,64 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 3000);
 
-    // --- Mouse Parallax Effect ---
+    // --- Mouse Parallax Effect & Stardust Trail ---
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    let currentMouseX = 0;
+    let currentMouseY = 0;
     let lastStardustTime = 0;
 
     document.addEventListener('mousemove', (e) => {
-        // Only apply on desktop
         if (window.innerWidth <= 768) return;
-
-        const x = (e.clientX / window.innerWidth - 0.5) * 2; // Range -1 to 1
-        const y = (e.clientY / window.innerHeight - 0.5) * 2; // Range -1 to 1
-
-        document.documentElement.style.setProperty('--mouse-x', x);
-        document.documentElement.style.setProperty('--mouse-y', y);
-
-        // Stardust cursor trail
-        const now = Date.now();
-        if (now - lastStardustTime > 50) { // Throttle trail generation
-            lastStardustTime = now;
-            const stardust = document.createElement('div');
-            stardust.className = 'stardust';
-            stardust.style.left = `${e.clientX}px`;
-            stardust.style.top = `${e.clientY}px`;
-
-            // Randomize size slightly for a more organic feel
-            const size = Math.random() * 2 + 2;
-            stardust.style.width = `${size}px`;
-            stardust.style.height = `${size}px`;
-
-            document.body.appendChild(stardust);
-
-            setTimeout(() => {
-                if (document.body.contains(stardust)) {
-                    document.body.removeChild(stardust);
-                }
-            }, 1000); // Remove after animation
-        }
+        targetMouseX = e.clientX;
+        targetMouseY = e.clientY;
     });
+
+    function animateMouseEffects() {
+        if (window.innerWidth > 768) {
+            // Smooth interpolation for parallax
+            currentMouseX += (targetMouseX - currentMouseX) * 0.1;
+            currentMouseY += (targetMouseY - currentMouseY) * 0.1;
+
+            const px = (currentMouseX / window.innerWidth - 0.5) * 2;
+            const py = (currentMouseY / window.innerHeight - 0.5) * 2;
+
+            document.documentElement.style.setProperty('--mouse-x', px);
+            document.documentElement.style.setProperty('--mouse-y', py);
+
+            // Stardust cursor trail using interpolated position
+            const now = Date.now();
+            // Calculate distance moved
+            const dx = targetMouseX - currentMouseX;
+            const dy = targetMouseY - currentMouseY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            // Generate stardust if moving fast enough OR just occasionally to keep it alive
+            if ((dist > 5 && now - lastStardustTime > 30) || (now - lastStardustTime > 200)) {
+                lastStardustTime = now;
+                const stardust = document.createElement('div');
+                stardust.className = 'stardust';
+                // Use custom properties instead of inline style for CSP compliance
+                stardust.style.setProperty('--stardust-x', `${currentMouseX}px`);
+                stardust.style.setProperty('--stardust-y', `${currentMouseY}px`);
+
+                const size = Math.random() * 2 + 2;
+                stardust.style.setProperty('--stardust-size', `${size}px`);
+
+                document.body.appendChild(stardust);
+
+                setTimeout(() => {
+                    if (document.body.contains(stardust)) {
+                        document.body.removeChild(stardust);
+                    }
+                }, 1000);
+            }
+        }
+        requestAnimationFrame(animateMouseEffects);
+    }
+
+    // Start animation loop
+    requestAnimationFrame(animateMouseEffects);
 
     // --- Initializer ---
     initMap();
