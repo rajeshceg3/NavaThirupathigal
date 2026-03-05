@@ -348,7 +348,22 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('info-card-subtitle-ta').textContent = temple.tamilName;
             document.getElementById('planet-icon').textContent = temple.planetIcon;
             document.getElementById('planet-text').textContent = temple.planet;
-            document.getElementById('info-card-description').textContent = temple.description;
+
+            const descEl = document.getElementById('info-card-description');
+            descEl.innerHTML = '';
+            const words = temple.description.split(' ');
+            words.forEach((word, i) => {
+                const span = document.createElement('span');
+                span.className = 'reveal-word';
+                span.style.setProperty('--word-index', i);
+                span.textContent = word;
+                descEl.appendChild(span);
+
+                // Add a text node for space if not the last word
+                if (i < words.length - 1) {
+                    descEl.appendChild(document.createTextNode(' '));
+                }
+            });
 
             // Re-apply stagger animations
             const elementsToAnimate = [
@@ -468,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const delay = index * 0.15; // match staggered list
             const customIcon = L.divIcon({
                 className: 'orb-marker',
-                html: `<div class="orb-core" style="animation: marker-pop 0.6s var(--ease-elastic) ${delay}s forwards; opacity: 0; transform: scale(0);"></div><div class="orb-ring" style="animation-delay: ${delay + 0.6}s;"></div>`,
+                html: `<div class="orb-core" style="animation: marker-pop 0.6s var(--ease-elastic) ${delay}s forwards; opacity: 0; transform: scale(0);"></div><div class="orb-ring" style="animation-delay: ${delay + 0.6}s;"></div><div class="orb-ring ring-2" style="animation-delay: ${delay + 1.2}s; width: 44px; height: 44px; border-style: dashed;"></div>`,
                 iconSize: [40, 40],
                 iconAnchor: [20, 20]
             });
@@ -575,6 +590,14 @@ document.addEventListener('DOMContentLoaded', function() {
             opacity: 0.8,
             className: 'celestial-river',
             dashArray: '3000, 3000'
+        }).addTo(map);
+
+        L.polyline(coords, {
+            color: '#fff',
+            weight: 1,
+            opacity: 0.6,
+            className: 'energy-pulse',
+            dashArray: '5, 20'
         }).addTo(map);
     }
 
@@ -703,19 +726,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const x = (e.clientX / window.innerWidth - 0.5) * 2; // Range -1 to 1
         const y = (e.clientY / window.innerHeight - 0.5) * 2; // Range -1 to 1
 
-        const stars1 = document.querySelector('.stars');
-        const stars2 = document.querySelector('.stars2');
-        const navPanel = document.querySelector('.nav-panel');
-
-        if (stars1) stars1.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
-        if (stars2) stars2.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
-        if (navPanel) navPanel.style.transform = `translate(${x * -5}px, ${y * -5}px)`;
-
-        // Also subtly move info card if visible
-        if (infoCard.classList.contains('visible')) {
-            // we maintain the slide-in transform by adding to it
-            infoCard.style.transform = `translate(calc(0px + ${x * -10}px), ${y * -10}px) scale(1)`;
-        }
+        document.documentElement.style.setProperty('--mouse-x', x);
+        document.documentElement.style.setProperty('--mouse-y', y);
 
         // Stardust cursor trail
         const now = Date.now();
