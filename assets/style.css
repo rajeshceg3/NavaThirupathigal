@@ -1155,3 +1155,81 @@ body.is-traveling .info-card.visible {
         bottom: 7rem; /* Above the carousel */
     }
 }
+
+/* Constellation tools are opened deliberately, never over a temple story. */
+.constellation-toggle {
+    position: fixed; top: max(16px, env(safe-area-inset-top)); left: 16px;
+    z-index: 650; min-height: 48px; padding: 10px 18px;
+    color: var(--color-primary); background: var(--color-bg-panel-mobile);
+    border: 1px solid var(--color-primary); border-radius: 7px 18px 8px 16px;
+    font: 600 14px var(--font-body); cursor: pointer;
+}
+.constellation-toggle span { font-size: 23px; vertical-align: -2px; margin-right: 6px; }
+.constellation-toggle[aria-expanded="true"] { background: #251b0c; }
+.nav-panel { display: none; transform: none; }
+.navigation-open .nav-panel {
+    display: block; position: fixed; top: 80px; left: 16px; right: auto; bottom: auto;
+    width: min(380px, calc(100vw - 32px)); height: auto; max-height: calc(100dvh - 110px);
+    overflow: auto; white-space: normal; background: var(--color-bg-panel-mobile);
+    border: 1px solid var(--color-primary); border-radius: 14px; z-index: 600;
+    mask-image: none; -webkit-mask-image: none; opacity: 1; filter: none;
+}
+.nav-header { display: block; padding: 20px 20px 14px; margin: 0; position: static; }
+.temple-list { flex-direction: column; padding: 12px; gap: 8px; margin: 0; }
+.temple-item { min-height: 76px; height: auto; width: 100%; flex-shrink: 0; border-radius: 10px; }
+.temple-item, .temple-item.active, .temple-item:hover { transform: none; animation: none; opacity: 1; }
+.temple-card-bg { position: absolute; inset: 0; width: 76px; height: 100%; border-radius: 9px 0 0 9px; }
+.temple-card-overlay { display: none; }
+.temple-content { position: relative; min-height: 76px; height: auto; padding: 12px 12px 12px 88px; display: flex; flex-direction: row; gap: 12px; align-items: center; justify-content: flex-start; }
+.temple-index { position: static; padding: 0; background: none; border: 0; backdrop-filter: none; }
+.temple-info { white-space: normal; min-width: 0; }
+.temple-name-en { font-size: 16px; line-height: 1.35; }
+.temple-name-ta { display: block; font-size: 12px; line-height: 1.5; }
+.start-tour-fab { position: static; display: block; width: calc(100% - 24px); min-height: 48px; margin: 12px 12px 0; border-radius: 8px; animation: none; box-shadow: none; }
+.tour-active .start-tour-fab { display: none; }
+.detail-open .constellation-toggle { visibility: hidden; }
+.info-card { visibility: hidden; pointer-events: none; }
+.info-card.visible { visibility: visible; pointer-events: auto; transform: none; z-index: 700; }
+.info-card-content { padding-bottom: 28px; }
+.info-card-close-btn { min-width: 44px; min-height: 44px; }
+.tour-active .info-card-close-btn { display: flex; }
+.tour-btn, #tour-autoplay-btn { min-height: 44px; }
+.tour-controls { flex-wrap: wrap; gap: 10px; }
+.tour-progress-container { flex: 1; min-width: 95px; }
+#tour-exit-btn { width: 100%; }
+.toast-notification { bottom: auto; top: 80px; width: min(430px, calc(100vw - 32px)); max-height: 120px; overflow: auto; padding: 8px 12px; font-size: 12px; transform: translateX(-50%) translateY(-200px); }
+.toast-close { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+.leaflet-control-attribution { display: block; max-width: calc(100vw - 12px); }
+.detail-open .leaflet-bottom { z-index: 750; }
+.leaflet-control-zoom a { min-width: 44px; min-height: 44px; line-height: 44px; }
+button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; }
+@media (max-width: 768px) {
+    .info-card { height: 76dvh; max-height: calc(100dvh - 150px); border-radius: 20px 20px 0 0; }
+    .info-card-image { flex-shrink: 0; height: 190px; }
+    .info-card-content { margin-top: -20px; padding: 0 22px 40px; }
+    .info-card-title { font-size: 28px; }
+    .info-card-header { margin-bottom: 20px; }
+    .info-card-planet-info { margin-bottom: 22px; }
+    .info-card-description { font-size: 16px; line-height: 1.8; padding-left: 16px; }
+    .leaflet-control-zoom { display: block; }
+    .leaflet-bottom .leaflet-control-zoom { margin-bottom: 24px; }
+    .detail-open .leaflet-control-zoom { display: none; }
+    .toast-notification { top: 74px; max-height: 100px; }
+}
+/* A temple's name, planet and full story are readable immediately. */
+.info-card .stagger-1, .info-card .stagger-2, .info-card .stagger-3, .info-card .stagger-4,
+.info-card .reveal-word { opacity: 1; transform: none; animation: none; }
+body.is-traveling .info-card.visible { opacity: 1; filter: none; pointer-events: auto; }
+.temple-item { display: block; padding: 0; }
+.temple-content { width: 100%; }
+.temple-index { margin-right: 0; }
+.active-indicator { display: none; }
+.tour-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(82px, 1fr) minmax(0, 1fr); }
+.tour-btn { padding-left: 8px; padding-right: 8px; }
+#tour-exit-btn { grid-column: 1 / -1; }
+@media (max-width: 768px) {
+    .detail-open .leaflet-bottom { bottom: auto; top: 0; }
+    .detail-open .leaflet-control-attribution { margin-top: 12px; margin-right: 12px; }
+}
+/* Inherited dialog visibility must not be delayed by button transition: all. */
+.info-card button { transition-property: background-color, color, transform, border-color, box-shadow; }
