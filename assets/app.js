@@ -427,7 +427,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Do not wait for a CSS transition to make the dialog usable.
             const focusTarget = isTourActive ? document.getElementById('tour-next-btn') : document.getElementById('info-card-close-btn');
-            if (focusTarget) focusTarget.focus({ preventScroll: true });
+            requestAnimationFrame(() => {
+                if (infoCard.classList.contains('visible') && focusTarget && focusTarget.isConnected) focusTarget.focus({ preventScroll: true });
+            });
 
             // Fly map to location
             map.flyTo(temple.coords, 15, { animate: true, duration: 1.5 });

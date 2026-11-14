@@ -1231,3 +1231,5 @@ body.is-traveling .info-card.visible { opacity: 1; filter: none; pointer-events:
     .detail-open .leaflet-bottom { bottom: auto; top: 0; }
     .detail-open .leaflet-control-attribution { margin-top: 12px; margin-right: 12px; }
 }
+/* Inherited dialog visibility must not be delayed by button transition: all. */
+.info-card button { transition-property: background-color, color, transform, border-color, box-shadow; }
