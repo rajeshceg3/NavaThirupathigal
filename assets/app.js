@@ -7,6 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const introButton = document.getElementById('intro-button');
     const appContainer = document.getElementById('app-container');
     const templeList = document.getElementById('temple-list');
+    const constellationToggle = document.getElementById('constellation-toggle');
+    const constellationPanel = document.getElementById('constellation-panel');
+    function setNavigation(open) {
+        document.body.classList.toggle('navigation-open', open);
+        constellationToggle.setAttribute('aria-expanded', String(open));
+        constellationPanel.inert = !open;
+    }
+    constellationToggle.addEventListener('click', () => {
+        setNavigation(!document.body.classList.contains('navigation-open'));
+    });
     const infoCard = document.getElementById('info-card');
     infoCard.setAttribute('role', 'dialog');
     infoCard.setAttribute('aria-modal', 'true');
@@ -151,6 +161,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         activeTempleId = id;
+        if (id !== null) {
+            setNavigation(false);
+            if (constellationPanel.contains(lastFocusedElement)) lastFocusedElement = constellationToggle;
+        }
+        document.body.classList.toggle('detail-open', id !== null);
+        infoCard.inert = id === null;
+        constellationToggle.inert = id !== null;
+        document.getElementById('map').inert = id !== null;
 
         // Subdued Text-to-Speech Narration
         if ('speechSynthesis' in window) {
@@ -186,7 +204,8 @@ document.addEventListener('DOMContentLoaded', function() {
         render();
 
         if (activeTempleId === null && lastFocusedElement) {
-            lastFocusedElement.focus();
+            if (lastFocusedElement.closest('#info-card')) constellationToggle.focus();
+            else lastFocusedElement.focus();
         }
     }
 
@@ -403,16 +422,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Focus management
-            const isAlreadyVisible = infoCard.classList.contains('visible');
             infoCard.classList.add('visible');
+            infoCard.scrollTop = 0;
 
-            if (isAlreadyVisible) {
-                // If already visible, focus immediately as no transition will occur
-                document.getElementById('info-card-close-btn').focus();
-            } else {
-                infoCard.removeEventListener('transitionend', focusCloseBtn);
-                infoCard.addEventListener('transitionend', focusCloseBtn, { once: true });
-            }
+            // Do not wait for a CSS transition to make the dialog usable.
+            const focusTarget = isTourActive ? document.getElementById('tour-next-btn') : document.getElementById('info-card-close-btn');
+            if (focusTarget) focusTarget.focus({ preventScroll: true });
 
             // Fly map to location
             map.flyTo(temple.coords, 15, { animate: true, duration: 1.5 });
@@ -469,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
         map = L.map('map', { center: [8.64, 77.94], zoom: 12, zoomControl: false });
         tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            subdomains: 'abcd',
+            subdomains: 'abc',
             minZoom: 1,
             maxZoom: 16,
             ext: 'jpg'
@@ -478,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let toastShown = false;
         tileLayer.on('tileerror', function(event) {
             if (!toastShown) {
-                showToast("Offline Mode: Map tiles unavailable");
+                showToast("Some map tiles could not load. Place details still work.");
                 toastShown = true;
             }
         });
@@ -587,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fragment.appendChild(button);
 
             // Create Map Marker
-            const marker = L.marker(temple.coords, { icon: customIcon }).addTo(map);
+            const marker = L.marker(temple.coords, { icon: customIcon, title: temple.name, alt: temple.name }).addTo(map);
             marker.bindTooltip(temple.name, {
                 permanent: false,
                 direction: 'top',
@@ -675,6 +690,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Keyboard Navigation
     document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !isTourActive) {
+            if (activeTempleId !== null) setActiveTemple(null);
+            else { setNavigation(false); constellationToggle.focus(); }
+        }
         if (isTourActive) {
             if (e.key === 'ArrowLeft') navigateTour(-1);
             if (e.key === 'ArrowRight') {
@@ -691,7 +710,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key !== 'Tab') return;
 
         const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-        const focusableContent = infoCard.querySelectorAll(focusableElements);
+        const focusableContent = [...infoCard.querySelectorAll(focusableElements)].filter(el => !el.disabled && el.getClientRects().length > 0);
+        if (!focusableContent.length) return;
         const firstFocusable = focusableContent[0];
         const lastFocusable = focusableContent[focusableContent.length - 1];
 

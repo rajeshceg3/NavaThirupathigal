@@ -52,6 +52,9 @@ async def run_audit(playwright):
                 print("WARNING: No map tiles detected (could be canvas or slow load).")
 
             # 5. Check Navigation Items
+            assert not await page.locator("#constellation-panel").is_visible()
+            await page.click("#constellation-toggle")
+            assert await page.locator("#constellation-panel").is_visible()
             items_locator = page.locator(".temple-item")
             count = await items_locator.count()
             print(f"Found {count} temple items.")
@@ -60,6 +63,7 @@ async def run_audit(playwright):
                 # Click the second item (index 1) to test interaction
                 await items_locator.nth(1).click()
                 print("Clicked second temple item.")
+                assert not await page.locator("#constellation-panel").is_visible()
                 await page.wait_for_timeout(2000) # Wait for flyTo and info card
 
                 # 6. Check Info Card

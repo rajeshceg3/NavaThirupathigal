@@ -31,15 +31,16 @@
     </div>
 
     <div class="app-container" id="app-container" aria-live="polite">
-        <nav class="nav-panel">
+        <button class="constellation-toggle" id="constellation-toggle" aria-controls="constellation-panel" aria-expanded="false"><span aria-hidden="true">✧</span> Constellation</button>
+        <nav class="nav-panel" id="constellation-panel" aria-label="Choose a temple" inert>
             <h2 class="nav-header">The Constellation</h2>
+            <button id="start-tour-btn" class="start-tour-fab" aria-label="Start Guided Tour">Start Tour</button>
             <div class="temple-list" id="temple-list"></div>
         </nav>
         <main class="map-container">
             <div id="map"></div>
-            <button id="start-tour-btn" class="start-tour-fab" aria-label="Start Guided Tour">Start Tour</button>
-            <div class="info-card" id="info-card" aria-live="polite">
-                <button class="info-card-close-btn" id="info-card-close-btn">×</button>
+            <div class="info-card" id="info-card" aria-live="polite" inert>
+                <button class="info-card-close-btn" id="info-card-close-btn" aria-label="Close temple details">×</button>
                 <img src="" alt="" class="info-card-image" id="info-card-image">
                 <div class="info-card-content">
                     <div class="info-card-header">
